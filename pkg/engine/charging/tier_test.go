@@ -9,7 +9,7 @@ func TestMatchThresholdOver(t *testing.T) {
 	result := tier.Calculate(1000, 0)
 
 	if result != 1000 {
-		t.Errorf("Result should be 1000, 2*500")
+		t.Errorf("Result should be 1000, 2*500, but was %v", result)
 	}
 }
 
@@ -18,7 +18,7 @@ func TestMatchThresholdBelow(t *testing.T) {
 	result := tier.Calculate(400, 0)
 
 	if result != 800 {
-		t.Errorf("Result should be 800, 2*400")
+		t.Errorf("Result should be 800, 2*400, but was %v", result)
 	}
 }
 
@@ -27,7 +27,7 @@ func TestOutsideThreshold(t *testing.T) {
 	result := tier.Calculate(1000, 0)
 
 	if result != 0 {
-		t.Errorf("Result should be 0, because 1000 < 1500")
+		t.Errorf("Result should be 0, because 1000 < 1500, but was %v", result)
 	}
 }
 
@@ -36,7 +36,7 @@ func TestInfThreshold(t *testing.T) {
 	result := tier.Calculate(3000, 0)
 
 	if result != 6000 {
-		t.Errorf("Result should be 6000, 2*3000")
+		t.Errorf("Result should be 6000, 2*3000, but was %v", result)
 	}
 }
 
@@ -45,7 +45,7 @@ func TestIncludingFP(t *testing.T) {
 	result := tier.Calculate(1000, 0)
 
 	if result != 2100 {
-		t.Errorf("Result should be 6000, 100+2*1000")
+		t.Errorf("Result should be 6000, 100+2*1000, but was %v", result)
 	}
 }
 
@@ -54,7 +54,7 @@ func TestBoundaryTo(t *testing.T) {
 	result := tier.Calculate(500, 0)
 
 	if result != 1000 {
-		t.Errorf("Result should be 1000, 2*500")
+		t.Errorf("Result should be 1000, 2*500, but was %v", result)
 	}
 }
 
@@ -63,6 +63,6 @@ func TestBoundaryFrom(t *testing.T) {
 	result := tier.Calculate(1000, 0)
 
 	if result != 1000 {
-		t.Errorf("Result should be 1000, 2*500")
+		t.Errorf("Result should be 1000, 2*500, but was %v", result)
 	}
 }
