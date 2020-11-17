@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"math"
 	"testing"
 )
 
@@ -33,7 +32,7 @@ func TestOutsideThreshold(t *testing.T) {
 }
 
 func TestInfThreshold(t *testing.T) {
-	tier := Tier{From: 0, To: math.MaxInt64, FixedPrice: 0, LinearPrice: 2}
+	tier := Tier{From: 0, To: INF, FixedPrice: 0, LinearPrice: 2}
 	result := tier.Calculate(3000, 0)
 
 	if result != 6000 {
