@@ -5,12 +5,6 @@ type RatingPlan struct {
 	Tiers []Tier
 }
 
-//Usage specifies the usage for a single service
-type Usage struct {
-	Volume int64
-	Unit   Unit
-}
-
 //Calculate sums the result of all tiers over the input usage.
 func (r *RatingPlan) Calculate(usage Usage) int64 {
 	sum := int64(0)

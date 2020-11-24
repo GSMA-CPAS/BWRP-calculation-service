@@ -6,13 +6,6 @@ type ChargingModel struct {
 	AccessPlan RatingPlan
 }
 
-type IntermediateResult struct {
-	Service   Service
-	DealValue int64
-}
-
-type Service string
-
 const (
 	SMS  Service = "SMS"
 	MOOC Service = "MOOC"

@@ -1,5 +1,0 @@
-/*
- License-Placeholder
-*/
-
-package engine

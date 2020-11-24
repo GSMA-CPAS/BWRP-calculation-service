@@ -4,9 +4,6 @@
 
 package engine
 
-//Unit defines the calculation units
-type Unit int
-
 //Tier defines a calculation function with a threshold
 type Tier struct {
 	From        int64
