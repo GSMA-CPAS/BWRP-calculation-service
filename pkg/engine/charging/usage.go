@@ -4,6 +4,8 @@ package engine
 type Usage struct {
 	Volume int64
 	Unit   Unit
+	Charge int64
+	Tax    int64
 	Tadigs []string
 }
 
@@ -17,14 +19,17 @@ type ServiceTadig struct {
 
 type AggregatedUsage map[ServiceTadig]Usage
 
-// TODO take account of units
+// TODO take account of units and currecy?
 //Aggregate gets all the usage for every service / tadig combination and then aggregates them
 func (a AggregatedUsage) Aggregate(service Service, tadigs []string) (bool, Usage) {
-	volume := int64(0)
+	var volume, charge, tax int64
 	for _, tadig := range tadigs {
 		key := ServiceTadig{service, tadig}
 		usage := a[key]
 		volume = volume + usage.Volume
+		charge = charge + usage.Charge
+		tax = charge + usage.Tax
+
 	}
-	return true, Usage{volume, 0, tadigs}
+	return true, Usage{volume, 0, charge, tax, tadigs}
 }
