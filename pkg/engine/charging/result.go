@@ -9,9 +9,10 @@ type Result struct {
 }
 
 type IntermediateResult struct {
-	Service   Service
-	Tadigs    []string
-	DealValue int64
+	Service       Service
+	HomeTadigs    []string
+	VisitorTadigs []string
+	DealValue     int64
 }
 
 type Service string

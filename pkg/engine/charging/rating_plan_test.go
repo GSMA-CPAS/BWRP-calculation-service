@@ -13,7 +13,7 @@ func TestSumTiers(t *testing.T) {
 		{From: 1000, To: 1500, FixedPrice: 100, LinearPrice: 0},
 		{From: 1500, To: INF, FixedPrice: 100, LinearPrice: 2},
 	}}
-	result := r.Calculate(Usage{Volume: 2500})
+	result := r.Calculate(Usage{Volume: 2500}, Usage{Volume: 2500})
 
 	if result != 4200 {
 		t.Errorf("Result should add up to 4200, but was %v", result)

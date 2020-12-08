@@ -24,13 +24,15 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 	for _, part := range contract.Parts {
 		for _, group := range part.ServiceGroups {
 			for _, model := range group.ChargingModels {
-				if ok, usage := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs); ok {
-					intermediateResult := model.Calculate(usage)
-					intermediateResult.Service = model.Service
-					intermediateResult.Tadigs = group.HomeTadigs
-					result.IntermediateResults = append(result.IntermediateResults, intermediateResult)
-				}
+				h := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs)
+				v := aggUsage.Aggregate(model.Service, group.VisitorTadigs, group.HomeTadigs)
+				intermediateResult := model.Calculate(h, v)
+				intermediateResult.Service = model.Service
+				intermediateResult.HomeTadigs = group.HomeTadigs
+				intermediateResult.VisitorTadigs = group.VisitorTadigs
+				result.IntermediateResults = append(result.IntermediateResults, intermediateResult)
 			}
+
 		}
 	}
 	return result

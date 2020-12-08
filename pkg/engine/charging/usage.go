@@ -23,7 +23,7 @@ type AggregatedUsage map[ServiceTadig]Usage
 
 // TODO take account of units and currency? (Not in MVP1)
 //Aggregate gets all the usage for every service / tadig combination and then aggregates them
-func (a AggregatedUsage) Aggregate(service Service, htadigs []string, vtadigs []string) (bool, Usage) {
+func (a AggregatedUsage) Aggregate(service Service, htadigs []string, vtadigs []string) Usage {
 	var volume, charge, tax int64
 	for _, h := range htadigs {
 		for _, v := range vtadigs {
@@ -34,5 +34,5 @@ func (a AggregatedUsage) Aggregate(service Service, htadigs []string, vtadigs []
 			tax = charge + usage.Tax
 		}
 	}
-	return true, Usage{volume, 0, charge, tax, htadigs, vtadigs}
+	return Usage{volume, 0, charge, tax, htadigs, vtadigs}
 }
