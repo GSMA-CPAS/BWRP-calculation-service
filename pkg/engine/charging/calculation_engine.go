@@ -4,7 +4,12 @@ type CalculationEngine struct {
 }
 
 type ContractPart struct {
-	Tadigs         []string //TODO services can override this
+	ServiceGroups []ServiceGroup
+}
+
+type ServiceGroup struct {
+	HomeTadigs     []string
+	VisitorTadigs  []string
 	ChargingModels []ChargingModel
 }
 
@@ -17,14 +22,15 @@ type Contract struct {
 func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contract) Result {
 	result := Result{IntermediateResults: make([]IntermediateResult, 0)}
 	for _, part := range contract.Parts {
-		for _, model := range part.ChargingModels {
-			if ok, usage := aggUsage.Aggregate(model.Service, part.Tadigs); ok {
-				intermediateResult := model.Calculate(usage)
-				intermediateResult.Service = model.Service
-				intermediateResult.Tadigs = part.Tadigs
-				result.IntermediateResults = append(result.IntermediateResults, intermediateResult)
+		for _, group := range part.ServiceGroups {
+			for _, model := range group.ChargingModels {
+				if ok, usage := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs); ok {
+					intermediateResult := model.Calculate(usage)
+					intermediateResult.Service = model.Service
+					intermediateResult.Tadigs = group.HomeTadigs
+					result.IntermediateResults = append(result.IntermediateResults, intermediateResult)
+				}
 			}
-
 		}
 	}
 	return result

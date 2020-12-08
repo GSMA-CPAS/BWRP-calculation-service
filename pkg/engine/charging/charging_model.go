@@ -1,9 +1,14 @@
 package engine
 
 type ChargingModel struct {
-	Service    Service
-	RatingPlan RatingPlan
-	AccessPlan RatingPlan
+	Service        Service
+	RatingPlan     *RatingPlan
+	UnbalancedPlan *RatingPlan
+	AccessPlan     *RatingPlan
+}
+
+func (c *ChargingModel) HasRatioPlan() bool {
+	return c.UnbalancedPlan != nil
 }
 
 const (
