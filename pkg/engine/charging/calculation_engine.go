@@ -1,18 +1,22 @@
 package engine
 
+// CalculationEngine is the type for the engine.
 type CalculationEngine struct {
 }
 
+// ContractPart , defines a part of the contract containing the services and chargingmodels.
 type ContractPart struct {
 	ServiceGroups []ServiceGroup
 }
 
+// ServiceGroup is a grouping between tadigs and chargingmodels.
 type ServiceGroup struct {
 	HomeTadigs     []string
 	VisitorTadigs  []string
 	ChargingModels []ChargingModel
 }
 
+// Contract is the overarching contract type.
 type Contract struct {
 	Parts []ContractPart
 }
