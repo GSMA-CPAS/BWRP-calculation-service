@@ -1,0 +1,55 @@
+basePath: /
+definitions:
+  models.IntermediateResult:
+    properties:
+      dealValue:
+        type: integer
+      homeTadigs:
+        items:
+          type: string
+        type: array
+      service:
+        type: string
+      visitorTadigs:
+        items:
+          type: string
+        type: array
+    type: object
+  models.Result:
+    properties:
+      intermediateResults:
+        items:
+          $ref: '#/definitions/models.IntermediateResult'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: developers@horizon.red
+    name: BWRP
+  description: Calculation API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Calculation API
+  version: "1.0"
+paths:
+  /:
+    post:
+      consumes:
+      - '*/*'
+      description: Calculate the deal value by getting the contract and usage data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Result'
+      summary: Calculate the dealvalue
+      tags:
+      - root
+schemes:
+- http
+- https
+swagger: "2.0"

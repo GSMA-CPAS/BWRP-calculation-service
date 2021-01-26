@@ -1,0 +1,83 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Calculation API",
+        "title": "Calculation API",
+        "contact": {
+            "name": "BWRP",
+            "email": "developers@horizon.red"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/": {
+            "post": {
+                "description": "Calculate the deal value by getting the contract and usage data",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "root"
+                ],
+                "summary": "Calculate the dealvalue",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Result"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.IntermediateResult": {
+            "type": "object",
+            "properties": {
+                "dealValue": {
+                    "type": "integer"
+                },
+                "homeTadigs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "service": {
+                    "type": "string"
+                },
+                "visitorTadigs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.Result": {
+            "type": "object",
+            "properties": {
+                "intermediateResults": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.IntermediateResult"
+                    }
+                }
+            }
+        }
+    }
+}
