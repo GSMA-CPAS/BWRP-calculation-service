@@ -5,6 +5,7 @@ import (
 
 	"github.com/GSMA-CPAS/BWRP-calculation-service/cmd/calculation-api/models"
 
+	_ "github.com/GSMA-CPAS/BWRP-calculation-service/cmd/calculation-api/docs"
 	engine "github.com/GSMA-CPAS/BWRP-calculation-service/pkg/engine/charging"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

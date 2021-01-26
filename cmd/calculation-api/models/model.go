@@ -7,11 +7,19 @@ type Result struct {
 
 // IntermediateResult contains the results per service
 type IntermediateResult struct {
-	Service       Service  `json:"service"`
+	Service       string   `json:"service"`
 	HomeTadigs    []string `json:"homeTadigs"`
 	VisitorTadigs []string `json:"visitorTadigs"`
 	DealValue     int64    `json:"dealValue"`
 }
 
-// Service is a string
-type Service string
+// Usage contains a usage record
+type Usage struct {
+	Volume       int64
+	Unit         int
+	Charge       int64
+	Tax          int64
+	Service      string
+	HomeTadig    string
+	VisitorTadig string
+}

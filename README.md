@@ -11,3 +11,6 @@ The api in this project uses swaggo to generate the documentation.
 
 1. Install swaggo `go get -u github.com/swaggo/swag/cmd/swag`
 2. `swag init` inside the api directory to generate the documentation.
+
+
+Start the server `go run main.go` then visit `localhost:8080/swagger/index.html`
