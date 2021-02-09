@@ -17,7 +17,7 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 	for i, item := range intermediateResults {
 		ir[i] = IntermediateResult{
 			DealValue: item.DealValue,
-			ID:        toID(item.Service),
+			Service:   item.Service,
 		}
 		ir[i].HomeTadigs = item.HomeTadigs
 		ir[i].VisitorTadigs = item.VisitorTadigs
@@ -30,7 +30,7 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 func ConvertToEngineAggregatedUsage(usages []UsageData) engine.AggregatedUsage {
 	var aggregatedUsage engine.AggregatedUsage = make(engine.AggregatedUsage)
 	for _, usage := range usages {
-		key := engine.ServiceTadig{Service: toServiceID(usage.ID), HomeTadig: usage.HomeTadig, VisitorTadig: usage.VisitorTadig}
+		key := engine.ServiceTadig{Service: usage.Service, HomeTadig: usage.HomeTadig, VisitorTadig: usage.VisitorTadig}
 		item, ok := aggregatedUsage[key]
 		if !ok {
 			aggregatedUsage[key] = engine.Usage{Volume: usage.Volume, Unit: engine.Unit(usage.Unit), Charge: usage.Charge, Tax: usage.Tax}
@@ -49,9 +49,7 @@ func ConvertToEngineContract(contract []DiscountModel) engine.Contract {
 		for _, serviceGroup := range discount.ServiceGroups {
 			var chargeModels = make([]engine.ChargingModel, 0)
 			for _, service := range serviceGroup.Services {
-				if service.Rate != nil {
-					chargeModels = append(chargeModels, engine.ChargingModel{Service: toServiceID(service.ID), RatingPlan: toRatingPlan(service)})
-				}
+				chargeModels = append(chargeModels, *toEngineChargingModel(service))
 			}
 			serviceGroups = append(serviceGroups, engine.ServiceGroup{HomeTadigs: serviceGroup.HomeTadigs, VisitorTadigs: serviceGroup.VisitorTadigs, ChargingModels: chargeModels})
 		}
@@ -60,30 +58,52 @@ func ConvertToEngineContract(contract []DiscountModel) engine.Contract {
 	return engine.Contract{Parts: parts}
 }
 
-func toRatingPlan(service Service) *engine.RatingPlan {
-	var tiers = make([]engine.Tier, 0)
-	var from int64 = 0
-	for _, tier := range service.Rate {
-		tiers = append(tiers, engine.Tier{FixedPrice: tier.FixedPrice, LinearPrice: tier.LinearPrice, From: from, To: tier.Threshold})
-		from = tier.Threshold
+func toEngineChargingModel(service Service) *engine.ChargingModel {
+	var ratingPlan RatingPlan = getRatingPlanForPricing(service)
+	if isRate(ratingPlan.Rate) {
+		return &engine.ChargingModel{Service: service.Service, RatingPlan: toEngineRatingPlan(ratingPlan.Rate)}
+	} else if isRatio(ratingPlan.BalancedRate, ratingPlan.UnbalancedRate) {
+		return &engine.ChargingModel{Service: service.Service, RatioPlan: toEngineRatioPlan(ratingPlan.BalancedRate.Value, ratingPlan.UnbalancedRate.Value)}
 	}
-	return &engine.RatingPlan{Tiers: tiers}
+	return nil
 }
 
-func toRatioPlan(service Service) *engine.RatioPlan {
-	return &engine.RatioPlan{Balanced: nil, Unbalanced: nil}
+func toEngineRatingPlan(rate Rate) *engine.RatingPlan {
+	var engineTiers = make([]engine.Tier, 0)
+
+	if len(rate.Thresholds) > 0 {
+		var to int64 = 0
+		for i := len(rate.Thresholds) - 1; i >= 0; i-- {
+			engineTiers = append(engineTiers, engine.Tier{
+				FixedPrice:  rate.Thresholds[i].FixedPrice,
+				LinearPrice: rate.Thresholds[i].LinearPrice,
+				From:        rate.Thresholds[i].Start,
+				To:          to,
+			})
+			to = rate.Thresholds[i].Start
+		}
+	} else {
+		engineTiers = append(engineTiers, engine.Tier{FixedPrice: int64(rate.FixedPrice), LinearPrice: int64(rate.LinearPrice), From: 0, To: 0})
+	}
+	return &engine.RatingPlan{Tiers: engineTiers}
 }
 
-func toServiceID(ID string) engine.Service {
-	if ID == SMS {
-		return engine.SMS
-	}
-	return engine.MOOC
+func toEngineRatioPlan(balancedRate int64, unbalancedRate int64) *engine.RatioPlan {
+	return &engine.RatioPlan{BalancedRate: balancedRate, UnbalancedRate: unbalancedRate}
 }
 
-func toID(service engine.Service) string {
-	if service == engine.SMS {
-		return SMS
+func getRatingPlanForPricing(service Service) RatingPlan {
+	if service.UsagePricing != nil {
+		return service.UsagePricing.RatingPlan
+	} else {
+		return service.AccessPricing.RatingPlan
 	}
-	return MOOC
+}
+
+func isRate(rate Rate) bool {
+	return (len(rate.Thresholds) > 0 || rate.FixedPrice > 0 || rate.LinearPrice > 0)
+}
+
+func isRatio(balanced BalancedRate, unbalanced BalancedRate) bool {
+	return (balanced.Value > 0 || unbalanced.Value > 0)
 }

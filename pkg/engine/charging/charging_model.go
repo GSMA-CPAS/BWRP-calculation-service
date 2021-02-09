@@ -2,7 +2,7 @@ package engine
 
 // ChargingModel defines the ratingplans for a service.
 type ChargingModel struct {
-	Service    Service
+	Service    string
 	RatingPlan *RatingPlan
 	RatioPlan  *RatioPlan
 	AccessPlan *RatingPlan
@@ -13,16 +13,11 @@ func (c *ChargingModel) HasRatioPlan() bool {
 	return c.RatioPlan != nil
 }
 
-const (
-	SMS  Service = "SMS"
-	MOOC Service = "MOOC"
-)
-
 //Calculate returns the intermediate result for a specfic service
 func (c *ChargingModel) Calculate(h Usage, v Usage) IntermediateResult {
 	var dealValue int64
 	if c.HasRatioPlan() {
-
+		dealValue = c.RatioPlan.Calculate(h, v)
 	} else {
 		dealValue = c.RatingPlan.Calculate(h.Volume, v.Unit)
 	}

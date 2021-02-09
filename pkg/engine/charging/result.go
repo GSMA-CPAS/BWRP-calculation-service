@@ -11,11 +11,8 @@ type Result struct {
 
 // IntermediateResult contains the results per service
 type IntermediateResult struct {
-	Service       Service
+	Service       string
 	HomeTadigs    []string
 	VisitorTadigs []string
 	DealValue     int64
 }
-
-// Service is a string
-type Service string

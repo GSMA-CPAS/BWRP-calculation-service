@@ -14,7 +14,7 @@ type Usage struct {
 type Unit int
 
 type ServiceTadig struct {
-	Service      Service
+	Service      string
 	HomeTadig    string
 	VisitorTadig string
 }
@@ -23,7 +23,7 @@ type AggregatedUsage map[ServiceTadig]Usage
 
 // TODO take account of units and currency? (Not in MVP1)
 //Aggregate gets all the usage for every service / tadig combination and then aggregates them
-func (a AggregatedUsage) Aggregate(service Service, htadigs []string, vtadigs []string) Usage {
+func (a AggregatedUsage) Aggregate(service string, htadigs []string, vtadigs []string) Usage {
 	var volume, charge, tax int64
 	for _, h := range htadigs {
 		for _, v := range vtadigs {

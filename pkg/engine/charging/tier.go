@@ -17,8 +17,15 @@ type Tier struct {
 //when the volume is outside of the range of the threshold the result is 0, this way
 //a simpel sum over all tiers can be made.
 func (t *Tier) Calculate(volume int64, unit Unit) int64 {
+	var adjustedVolume int64
 	deltaThreshold := t.To - t.From
-	adjustedVolume := max(0, min((volume-t.From), deltaThreshold))
+
+	if deltaThreshold > 0 {
+		adjustedVolume = max(0, min((volume-t.From), deltaThreshold))
+	} else {
+		adjustedVolume = max(0, (volume - t.From))
+	}
+
 	if adjustedVolume == 0 {
 		return 0
 	}
