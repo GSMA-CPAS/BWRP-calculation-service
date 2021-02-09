@@ -1,10 +1,5 @@
 package models
 
-const (
-	MOOC string = "service-0"
-	SMS  string = "service-1"
-)
-
 //FixedPrice defines the fixedPrice
 type FixedPrice int64
 
