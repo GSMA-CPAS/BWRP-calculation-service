@@ -2,10 +2,11 @@ package engine
 
 // ChargingModel defines the ratingplans for a service.
 type ChargingModel struct {
-	Service    string
-	RatingPlan *RatingPlan
-	RatioPlan  *RatioPlan
-	AccessPlan *RatingPlan
+	Service              string
+	IncludedInCommitment bool
+	RatingPlan           *RatingPlan
+	RatioPlan            *RatioPlan
+	AccessPlan           *RatingPlan
 }
 
 //HasRatioPlan checks if the rating should be done using the balanced/unbalanced model

@@ -7,7 +7,9 @@ import (
 // ConvertFromEngineResult convert from the engine type to the api type
 func ConvertFromEngineResult(result engine.Result) Result {
 	return Result{
-		IntermediateResults: ConvertFromEngineIntermediateResults(result.IntermediateResults),
+		ContractCommitmentResult: ConvertFromEngineCommitmentResult(result.ContractCommitmentResult),
+		DiscountCommitmentResult: ConvertFromEngineCommitmentResult(result.DiscountCommitmentResult),
+		IntermediateResults:      ConvertFromEngineIntermediateResults(result.IntermediateResults),
 	}
 }
 
@@ -23,6 +25,21 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 		ir[i].VisitorTadigs = item.VisitorTadigs
 	}
 	return ir
+}
+
+// ConvertFromEngineCommitmentResult convert from the engine type to the api type
+func ConvertFromEngineCommitmentResult(commitmentResults []engine.CommitmentResult) *[]CommitmentResult {
+	if len(commitmentResults) == 0 {
+		return nil
+	}
+	cmt := make([]CommitmentResult, len(commitmentResults))
+	for i, item := range commitmentResults {
+		cmt[i] = CommitmentResult{
+			Party:     item.Party,
+			DealValue: item.DealValue,
+		}
+	}
+	return &cmt
 }
 
 // ConvertToEngineAggregatedUsage adds all the usage and creates an aggregatedUsage
@@ -42,9 +59,9 @@ func ConvertToEngineAggregatedUsage(usages []UsageData) engine.AggregatedUsage {
 }
 
 // ConvertToEngineContract ...
-func ConvertToEngineContract(contract []DiscountModel) engine.Contract {
+func ConvertToEngineContract(contract map[string]DiscountModel) engine.Contract {
 	var parts = make([]engine.ContractPart, 0)
-	for _, discount := range contract {
+	for k, discount := range contract {
 		var serviceGroups = make([]engine.ServiceGroup, 0)
 		for _, serviceGroup := range discount.ServiceGroups {
 			var chargeModels = make([]engine.ChargingModel, 0)
@@ -53,7 +70,7 @@ func ConvertToEngineContract(contract []DiscountModel) engine.Contract {
 			}
 			serviceGroups = append(serviceGroups, engine.ServiceGroup{HomeTadigs: serviceGroup.HomeTadigs, VisitorTadigs: serviceGroup.VisitorTadigs, ChargingModels: chargeModels})
 		}
-		parts = append(parts, engine.ContractPart{ServiceGroups: serviceGroups})
+		parts = append(parts, engine.ContractPart{Party: k, Condition: toEngineCondition(discount.Condition), ServiceGroups: serviceGroups})
 	}
 	return engine.Contract{Parts: parts}
 }
@@ -61,9 +78,17 @@ func ConvertToEngineContract(contract []DiscountModel) engine.Contract {
 func toEngineChargingModel(service Service) *engine.ChargingModel {
 	var ratingPlan RatingPlan = getRatingPlanForPricing(service)
 	if isRate(ratingPlan.Rate) {
-		return &engine.ChargingModel{Service: service.Service, RatingPlan: toEngineRatingPlan(ratingPlan.Rate)}
+		return &engine.ChargingModel{
+			Service:              service.Service,
+			IncludedInCommitment: service.IncludedInCommitment,
+			RatingPlan:           toEngineRatingPlan(ratingPlan.Rate),
+		}
 	} else if isRatio(ratingPlan.BalancedRate, ratingPlan.UnbalancedRate) {
-		return &engine.ChargingModel{Service: service.Service, RatioPlan: toEngineRatioPlan(ratingPlan.BalancedRate.Value, ratingPlan.UnbalancedRate.Value)}
+		return &engine.ChargingModel{
+			Service:              service.Service,
+			IncludedInCommitment: service.IncludedInCommitment,
+			RatioPlan:            toEngineRatioPlan(ratingPlan.BalancedRate.Value, ratingPlan.UnbalancedRate.Value),
+		}
 	}
 	return nil
 }
@@ -106,4 +131,15 @@ func isRate(rate Rate) bool {
 
 func isRatio(balanced BalancedRate, unbalanced BalancedRate) bool {
 	return (balanced.Value > 0 || unbalanced.Value > 0)
+}
+
+func toEngineCondition(condition Condition) engine.Condition {
+	switch c := condition.SelectedConditionName; c {
+	case ContractRevenue:
+		return engine.Condition{Type: engine.ContractRevenue, Value: condition.SelectedCondition.Value}
+	case DiscountRevenue:
+		return engine.Condition{Type: engine.DiscountRevenue, Value: condition.SelectedCondition.Value}
+	default:
+		return engine.Condition{Type: engine.Unconditional}
+	}
 }

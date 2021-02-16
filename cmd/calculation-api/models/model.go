@@ -1,14 +1,22 @@
 package models
 
-//FixedPrice defines the fixedPrice
-type FixedPrice int64
-
-//LinearPrice defines the linearPrice
-type LinearPrice int64
+const (
+	Unconditional   string = "Unconditional"
+	ContractRevenue string = "ContractRevenueCommit"
+	DiscountRevenue string = "DiscountRevenueCommit"
+)
 
 // Result contains the results of the calculation.
 type Result struct {
-	IntermediateResults []IntermediateResult `json:"intermediateResults"`
+	ContractCommitmentResult *[]CommitmentResult  `json:"contractCommitmentResults,omitempty"`
+	DiscountCommitmentResult *[]CommitmentResult  `json:"dealCommitmentResults,omitempty"`
+	IntermediateResults      []IntermediateResult `json:"intermediateResults"`
+}
+
+// CommitmentResult contains the results based on commitment conditions
+type CommitmentResult struct {
+	Party     string `json:"party"`
+	DealValue int64  `json:"dealValue"`
 }
 
 // IntermediateResult contains the results per service
@@ -19,9 +27,10 @@ type IntermediateResult struct {
 	DealValue     int64    `json:"dealValue"`
 }
 
+//CalculateRequest contains the Usage data and discount models in the API request body
 type CalculateRequest struct {
-	Usage     []UsageData     `json:"usage"`
-	Discounts []DiscountModel `json:"discounts"`
+	Usage     []UsageData              `json:"usage"`
+	Discounts map[string]DiscountModel `json:"discounts"`
 }
 
 //Usage contains usageData records
@@ -40,12 +49,7 @@ type UsageData struct {
 	VisitorTadig string `json:"visitorTadig"`
 }
 
-//Contract contains contract discount models (user and partner)
-type Contract struct {
-	Discounts []DiscountModel `json:"discounts"`
-}
-
-//DiscountModels contain the discount agreement
+//DiscountModel contains a discount agreement
 type DiscountModel struct {
 	Condition     Condition      `json:"condition"`
 	ServiceGroups []ServiceGroup `json:"serviceGroups"`
@@ -53,15 +57,22 @@ type DiscountModel struct {
 
 //Condition contains the discount condition
 type Condition struct {
-	SelectedConditionName string `json:"selectedConditionName"`
-	SelectedCondition     string `json:"selectedCondition"`
+	SelectedConditionName string            `json:"selectedConditionName"`
+	SelectedCondition     SelectedCondition `json:"selectedCondition"`
+}
+
+//SelectedCondition contains the parameters for the condition
+type SelectedCondition struct {
+	Value          int64  `json:"value"`
+	Currency       string `json:"currency"`
+	IncludingTaxes bool   `json:"includingTaxes"`
 }
 
 //ServiceGroup contains the sergvice group data
 type ServiceGroup struct {
 	HomeTadigs    []string  `json:"homeTadigs"`
 	VisitorTadigs []string  `json:"visitorTadigs"`
-	Services      []Service `json:"services"`
+	Services      []Service `json:"services"` // make a map for Home and Visitor
 }
 
 //Service contains a chosenservice
