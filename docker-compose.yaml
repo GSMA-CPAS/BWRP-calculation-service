@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  calculator-service-local:
+    container_name: calculator-service-local
+    build: ./
+    image: calculator-service:latest
+    restart: always
+    ports:
+      - 6060:8080
