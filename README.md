@@ -14,3 +14,18 @@ The api in this project uses swaggo to generate the documentation.
 
 
 Start the server `go run main.go` then visit `localhost:8080/swagger/index.html`
+
+docker-conpose instruction
+Default `docker-compose.yaml` is configure to be run on port 8080. If this port is conflicting with other localservice, please edit
+```
+    ports:
+      - XXXX:8080
+```
+
+and replace 'XXXX' with the desired port.
+
+once completed to "start" run
+`docker-componse up`
+
+to "stop and remove" run
+`docker-componse down --rmi all`
