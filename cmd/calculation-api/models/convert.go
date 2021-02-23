@@ -54,7 +54,7 @@ func ConvertToEngineContract(contract map[string]DiscountModel) engine.Contract 
 					chargeModels = append(chargeModels, cm...)
 				}
 			}
-			serviceGroups = append(serviceGroups, engine.ServiceGroup{HomeTadigs: serviceGroup.HomeTadigs.Codes, VisitorTadigs: serviceGroup.VisitorTadigs.Codes, ChargingModels: chargeModels})
+			serviceGroups = append(serviceGroups, engine.ServiceGroup{HomeTadigs: serviceGroup.HomeTadigs, VisitorTadigs: serviceGroup.VisitorTadigs, ChargingModels: chargeModels})
 		}
 		parts = append(parts, engine.ContractPart{Party: k, Condition: toEngineCondition(discount.Condition), ServiceGroups: serviceGroups})
 	}
@@ -62,46 +62,55 @@ func ConvertToEngineContract(contract map[string]DiscountModel) engine.Contract 
 }
 
 func toEngineChargingModels(service Service) []engine.ChargingModel {
+	var ratingPlan RatingPlan = getRatingPlanForPricing(service)
 	chargingModels := make([]engine.ChargingModel, 0)
-	if isRate(service.Rate) {
+	if isRate(ratingPlan.Rate) {
 		chargingModels = append(chargingModels, engine.ChargingModel{
-			Service:              service.Name,
+			Service:              service.Service,
 			IncludedInCommitment: service.IncludedInCommitment,
-			RatingPlan:           toEngineRatingPlan(service.Rate),
+			RatingPlan:           toEngineRatingPlan(ratingPlan.Rate),
 		})
 	}
-	if isRate(service.AccessPricingRate) {
-		chargingModels = append(chargingModels, engine.ChargingModel{
-			Service:              service.Name,
-			IncludedInCommitment: service.IncludedInCommitment,
-			RatingPlan:           toEngineRatingPlan(service.AccessPricingRate),
-		})
-	}
+	// if isRate(service.AccessPricingRate) {
+	// 	chargingModels = append(chargingModels, engine.ChargingModel{
+	// 		Service:              service.Name,
+	// 		IncludedInCommitment: service.IncludedInCommitment,
+	// 		RatingPlan:           toEngineRatingPlan(service.AccessPricingRate),
+	// 	})
+	// }
 
-	if isRatio(service.BalancedRate, service.UnbalancedRate) {
+	if isRatio(ratingPlan.BalancedRate, ratingPlan.UnbalancedRate) {
 		chargingModels = append(chargingModels, engine.ChargingModel{
-			Service:              service.Name,
+			Service:              service.Service,
 			IncludedInCommitment: service.IncludedInCommitment,
-			RatioPlan:            toEngineRatioPlan(service.BalancedRate, service.UnbalancedRate),
+			RatioPlan:            toEngineRatioPlan(ratingPlan.BalancedRate, ratingPlan.UnbalancedRate),
 		})
 	}
 	return chargingModels
 }
 
-func toEngineRatingPlan(rate []Tier) *engine.RatingPlan {
-	return &engine.RatingPlan{Tiers: toEngineTiers(rate)}
+func toEngineRatingPlan(rate Rate) *engine.RatingPlan {
+	return &engine.RatingPlan{Tiers: toEngineTiers(rate.Thresholds)}
 }
 
-func toEngineRatioPlan(balancedRate []Tier, unbalancedRate []Tier) *engine.RatioPlan {
-	return &engine.RatioPlan{BalancedRate: toEngineTiers(balancedRate), UnbalancedRate: toEngineTiers(unbalancedRate)}
+func toEngineRatioPlan(balancedRate Rate, unbalancedRate Rate) *engine.RatioPlan {
+	return &engine.RatioPlan{BalancedRate: toEngineTiers(balancedRate.Thresholds), UnbalancedRate: toEngineTiers(unbalancedRate.Thresholds)}
 }
 
-func isRate(rate []Tier) bool {
-	return (len(rate) > 0)
+func getRatingPlanForPricing(service Service) RatingPlan {
+	if service.UsagePricing != nil {
+		return service.UsagePricing.RatingPlan
+	} else {
+		return service.AccessPricing.RatingPlan
+	}
 }
 
-func isRatio(balanced []Tier, unbalanced []Tier) bool {
-	return (len(balanced) > 0 || len(unbalanced) > 0)
+func isRate(rate Rate) bool {
+	return (len(rate.Thresholds) > 0 || rate.FixedPrice > 0 || rate.LinearPrice > 0)
+}
+
+func isRatio(balanced Rate, unbalanced Rate) bool {
+	return (len(balanced.Thresholds) > 0 || len(unbalanced.Thresholds) > 0)
 }
 
 func toEngineCondition(condition Condition) engine.Condition {
@@ -124,10 +133,10 @@ func toEngineTiers(tiers []Tier) []engine.Tier {
 			engineTiers = append(engineTiers, engine.Tier{
 				FixedPrice:  tiers[i].FixedPrice,
 				LinearPrice: tiers[i].LinearPrice,
-				From:        tiers[i].Threshold,
+				From:        tiers[i].Start,
 				To:          to,
 			})
-			to = tiers[i].Threshold
+			to = tiers[i].Start
 		}
 	}
 	return engineTiers

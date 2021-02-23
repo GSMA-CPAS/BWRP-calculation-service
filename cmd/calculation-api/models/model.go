@@ -22,7 +22,7 @@ type IntermediateResult struct {
 //CalculateRequest contains the Usage data and discount models in the API request body
 type CalculateRequest struct {
 	Usage          []UsageData              `json:"usage"`
-	DiscountModels map[string]DiscountModel `json:"discountModels"`
+	DiscountModels map[string]DiscountModel `json:"discounts"`
 }
 
 //Usage contains usageData records
@@ -49,7 +49,7 @@ type DiscountModel struct {
 
 //Condition contains the discount condition
 type Condition struct {
-	SelectedConditionName string            `json:"selectedConditionName"`
+	SelectedConditionName string            `json:"kind"`
 	SelectedCondition     SelectedCondition `json:"selectedCondition"`
 }
 
@@ -62,41 +62,38 @@ type SelectedCondition struct {
 
 //ServiceGroup contains the sergvice group data
 type ServiceGroup struct {
-	HomeTadigs    Codes     `json:"homeTadigs"`
-	VisitorTadigs Codes     `json:"visitorTadigs"`
-	Services      []Service `json:"chosenServices"`
-}
-
-type Codes struct {
-	Codes []string `json:"codes"`
+	HomeTadigs    []string  `json:"homeTadigs"`
+	VisitorTadigs []string  `json:"visitorTadigs"`
+	Services      []Service `json:"services"`
 }
 
 //Service contains a chosenservice
 type Service struct {
-	ID                   string `json:"id"`
-	Name                 string `json:"name"`
-	IncludedInCommitment bool   `json:"includedInCommitment"`
-	Unit                 string `json:"unit"`
-	Rate                 []Tier `json:"rate"`
-	AccessPricingUnit    string `json:"accessPricingUnit"`
-	AccessPricingRate    []Tier `json:"accessPricingRate"`
-	BalancedRate         []Tier `json:"balancedRate"`
-	UnbalancedRate       []Tier `json:"unbalancedRate"`
+	Service              string   `json:"service"`
+	IncludedInCommitment bool     `json:"includedInCommitment"`
+	UsagePricing         *Pricing `json:"usagePricing"`
+	AccessPricing        *Pricing `json:"accessPricing"`
 }
 
-// type BalancedRate struct {
-// 	Unit  int64 `json:"unit"`
-// 	Value int64 `json:"value"`
-// }
+type Pricing struct {
+	Unit       int        `json:"unit"`
+	RatingPlan RatingPlan `json:"ratingPlan"`
+}
+
+type RatingPlan struct {
+	Rate           Rate `json:"rate"`
+	BalancedRate   Rate `json:"balancedRate"`
+	UnbalancedRate Rate `json:"unbalancedRate"`
+}
 
 type Rate struct {
-	Thresholds  []Tier
-	FixedPrice  int64 `json:"fixedPrice"`
-	LinearPrice int64 `json:"linearPrice"`
+	Thresholds  []Tier `json:"thresholds"`
+	FixedPrice  int64  `json:"fixedPrice"`
+	LinearPrice int64  `json:"linearPrice"`
 }
 
 type Tier struct {
-	Threshold   int64 `json:"threshold"`
+	Start       int64 `json:"start"`
 	FixedPrice  int64 `json:"fixedPrice"`
 	LinearPrice int64 `json:"linearPrice"`
 }
