@@ -6,8 +6,8 @@ type RatingPlan struct {
 }
 
 //Calculate sums the result of all tiers over the input usage.
-func (r *RatingPlan) Calculate(vol int64, unit Unit) int64 {
-	sum := int64(0)
+func (r *RatingPlan) Calculate(vol float32, unit Unit) float32 {
+	sum := float32(0)
 	for _, tier := range r.Tiers {
 		sum += tier.Calculate(vol, unit)
 	}

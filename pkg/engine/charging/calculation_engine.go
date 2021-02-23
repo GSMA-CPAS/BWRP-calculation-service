@@ -1,7 +1,5 @@
 package engine
 
-import "fmt"
-
 const (
 	Unconditional = iota
 	ContractRevenue
@@ -42,52 +40,38 @@ type Contract struct {
 //Calculate returns the deal value by inputting the aggregate-usage and a contract
 //Go through all the contract parts and charging models
 func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contract) Result {
-	fmt.Printf("%+v\n", contract)
 	result := Result{
-		ContractCommitmentResult: make([]CommitmentResult, 0),
-		DiscountCommitmentResult: make([]CommitmentResult, 0),
-		IntermediateResults:      make([]IntermediateResult, 0),
+		IntermediateResults: make([]IntermediateResult, 0),
 	}
 	for _, part := range contract.Parts {
-		if part.Condition.Type == ContractRevenue {
-			result.ContractCommitmentResult = append(result.ContractCommitmentResult, calcContractDeal(aggUsage, part))
-		} else {
-			var inCommitmentValue int64 = 0
-			for _, group := range part.ServiceGroups {
-				for _, model := range group.ChargingModels {
-					h := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs)
+		var inCommitmentValue float32 = 0
+		var aggregatedChargeHome float32 = 0
+		for _, group := range part.ServiceGroups {
+			for _, model := range group.ChargingModels {
+				var intermediateResult IntermediateResult
+				h := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs)
+				if part.Condition.Type == ContractRevenue {
+					aggregatedChargeHome += h.Charge
+					intermediateResult.DealValue = h.Charge
+				} else {
 					v := aggUsage.Aggregate(model.Service, group.VisitorTadigs, group.HomeTadigs)
-					intermediateResult := model.Calculate(h, v)
-					intermediateResult.Service = model.Service
-					intermediateResult.HomeTadigs = group.HomeTadigs
-					intermediateResult.VisitorTadigs = group.VisitorTadigs
-					result.IntermediateResults = append(result.IntermediateResults, intermediateResult)
-					if model.IncludedInCommitment {
-						inCommitmentValue += intermediateResult.DealValue
-					}
+					intermediateResult = model.Calculate(h, v)
+				}
+				intermediateResult.Service = model.Service
+				intermediateResult.HomeTadigs = group.HomeTadigs
+				intermediateResult.VisitorTadigs = group.VisitorTadigs
+				result.IntermediateResults = append(result.IntermediateResults, intermediateResult)
+				if model.IncludedInCommitment {
+					inCommitmentValue += intermediateResult.DealValue
 				}
 			}
-			if part.Condition.Type == DiscountRevenue {
-				result.DiscountCommitmentResult = append(result.DiscountCommitmentResult,
-					CommitmentResult{Party: part.Party, DealValue: calcDiscountDeal(inCommitmentValue, part.Condition.Value)})
-			}
+		}
+		if part.Condition.Type == DiscountRevenue && inCommitmentValue < float32(part.Condition.Value) {
+			result.IntermediateResults = []IntermediateResult{}
+		}
+		if part.Condition.Type == ContractRevenue && aggregatedChargeHome < float32(part.Condition.Value) {
+			result.IntermediateResults = []IntermediateResult{}
 		}
 	}
 	return result
-}
-
-func calcContractDeal(aggUsage AggregatedUsage, part ContractPart) CommitmentResult {
-	var aggregatedChargeHome int64
-	for _, group := range part.ServiceGroups {
-		for _, model := range group.ChargingModels {
-			h := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs)
-			aggregatedChargeHome += h.Charge
-		}
-	}
-	result := max(part.Condition.Value, aggregatedChargeHome)
-	return CommitmentResult{Party: part.Party, DealValue: result}
-}
-
-func calcDiscountDeal(includedValue int64, commitValue int64) int64 {
-	return max(includedValue, commitValue)
 }

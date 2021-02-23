@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// {Parts:[{Party:HOME Condition:{Type:2 Value:6000 Currency: IncludingTaxes:false} ServiceGroups:[{HomeTadigs:[HOR1] VisitorTadigs:[HOR2] ChargingModels:[{Service:SMSMO IncludedInCommitment:true RatingPlan:0xc00000f8a0 RatioPlan:<nil> AccessPlan:<nil>} {Service:MOC IncludedInCommitment:false RatingPlan:0xc00000f8c0 RatioPlan:<nil> AccessPlan:<nil>} {Service:VOLTE IncludedInCommitment:false RatingPlan:<nil> RatioPlan:0xc000027c00 AccessPlan:<nil>} {Service:MOC EU IncludedInCommitment:false RatingPlan:0xc00000f8e0 RatioPlan:<nil> AccessPlan:<nil>}]}]} {Party:VISITOR Condition:{Type:0 Value:0 Currency: IncludingTaxes:false} ServiceGroups:[{HomeTadigs:[HOR2] VisitorTadigs:[HOR1] ChargingModels:[{Service:SMSMO IncludedInCommitment:false RatingPlan:0xc00000f900 RatioPlan:<nil> AccessPlan:<nil>} {Service:MOC IncludedInCommitment:false RatingPlan:0xc00000f920 RatioPlan:<nil> AccessPlan:<nil>} {Service:VOLTE IncludedInCommitment:false RatingPlan:<nil> RatioPlan:0xc000027c50 AccessPlan:<nil>} {Service:MOC EU IncludedInCommitment:false RatingPlan:0xc00000f940 RatioPlan:<nil> AccessPlan:<nil>}]}]}]}
 var model1 = Contract{
 	Parts: []ContractPart{
 		{
@@ -69,8 +68,6 @@ var usage1 = AggregatedUsage{
 }
 
 var result1 = Result{
-	ContractCommitmentResult: []CommitmentResult{},
-	DiscountCommitmentResult: []CommitmentResult{},
 	IntermediateResults: []IntermediateResult{
 		{Service: "SMS", HomeTadigs: []string{"HOR1"}, VisitorTadigs: []string{"HOR2"}, DealValue: 7500},
 		{Service: "MOOC", HomeTadigs: []string{"HOR1"}, VisitorTadigs: []string{"HOR2"}, DealValue: 1500},

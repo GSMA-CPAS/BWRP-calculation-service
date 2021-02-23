@@ -71,7 +71,7 @@ func Calculate(c echo.Context) error {
 	}
 
 	usage = models.ConvertToEngineAggregatedUsage(request.Usage)
-	contract = models.ConvertToEngineContract(request.Discounts)
+	contract = models.ConvertToEngineContract(request.DiscountModels)
 
 	result := e.Calculate(usage, contract)
 	return c.JSON(http.StatusOK, models.ConvertFromEngineResult(result))

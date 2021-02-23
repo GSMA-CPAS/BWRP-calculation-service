@@ -16,9 +16,9 @@ func (c *ChargingModel) HasRatioPlan() bool {
 
 //Calculate returns the intermediate result for a specfic service
 func (c *ChargingModel) Calculate(h Usage, v Usage) IntermediateResult {
-	var dealValue int64
+	var dealValue float32
 	if c.HasRatioPlan() {
-		dealValue = c.RatioPlan.Calculate(h, v)
+		dealValue = c.RatioPlan.Calculate(h, v, v.Unit)
 	} else {
 		dealValue = c.RatingPlan.Calculate(h.Volume, v.Unit)
 	}

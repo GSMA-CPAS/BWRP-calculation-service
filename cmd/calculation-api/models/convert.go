@@ -7,9 +7,7 @@ import (
 // ConvertFromEngineResult convert from the engine type to the api type
 func ConvertFromEngineResult(result engine.Result) Result {
 	return Result{
-		ContractCommitmentResult: ConvertFromEngineCommitmentResult(result.ContractCommitmentResult),
-		DiscountCommitmentResult: ConvertFromEngineCommitmentResult(result.DiscountCommitmentResult),
-		IntermediateResults:      ConvertFromEngineIntermediateResults(result.IntermediateResults),
+		IntermediateResults: ConvertFromEngineIntermediateResults(result.IntermediateResults),
 	}
 }
 
@@ -25,21 +23,6 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 		ir[i].VisitorTadigs = item.VisitorTadigs
 	}
 	return ir
-}
-
-// ConvertFromEngineCommitmentResult convert from the engine type to the api type
-func ConvertFromEngineCommitmentResult(commitmentResults []engine.CommitmentResult) *[]CommitmentResult {
-	if len(commitmentResults) == 0 {
-		return nil
-	}
-	cmt := make([]CommitmentResult, len(commitmentResults))
-	for i, item := range commitmentResults {
-		cmt[i] = CommitmentResult{
-			Party:     item.Party,
-			DealValue: item.DealValue,
-		}
-	}
-	return &cmt
 }
 
 // ConvertToEngineAggregatedUsage adds all the usage and creates an aggregatedUsage
@@ -66,80 +49,86 @@ func ConvertToEngineContract(contract map[string]DiscountModel) engine.Contract 
 		for _, serviceGroup := range discount.ServiceGroups {
 			var chargeModels = make([]engine.ChargingModel, 0)
 			for _, service := range serviceGroup.Services {
-				chargeModels = append(chargeModels, *toEngineChargingModel(service))
+				cm := toEngineChargingModels(service)
+				if len(cm) > 0 {
+					chargeModels = append(chargeModels, cm...)
+				}
 			}
-			serviceGroups = append(serviceGroups, engine.ServiceGroup{HomeTadigs: serviceGroup.HomeTadigs, VisitorTadigs: serviceGroup.VisitorTadigs, ChargingModels: chargeModels})
+			serviceGroups = append(serviceGroups, engine.ServiceGroup{HomeTadigs: serviceGroup.HomeTadigs.Codes, VisitorTadigs: serviceGroup.VisitorTadigs.Codes, ChargingModels: chargeModels})
 		}
 		parts = append(parts, engine.ContractPart{Party: k, Condition: toEngineCondition(discount.Condition), ServiceGroups: serviceGroups})
 	}
 	return engine.Contract{Parts: parts}
 }
 
-func toEngineChargingModel(service Service) *engine.ChargingModel {
-	var ratingPlan RatingPlan = getRatingPlanForPricing(service)
-	if isRate(ratingPlan.Rate) {
-		return &engine.ChargingModel{
-			Service:              service.Service,
+func toEngineChargingModels(service Service) []engine.ChargingModel {
+	chargingModels := make([]engine.ChargingModel, 0)
+	if isRate(service.Rate) {
+		chargingModels = append(chargingModels, engine.ChargingModel{
+			Service:              service.Name,
 			IncludedInCommitment: service.IncludedInCommitment,
-			RatingPlan:           toEngineRatingPlan(ratingPlan.Rate),
-		}
-	} else if isRatio(ratingPlan.BalancedRate, ratingPlan.UnbalancedRate) {
-		return &engine.ChargingModel{
-			Service:              service.Service,
+			RatingPlan:           toEngineRatingPlan(service.Rate),
+		})
+	}
+	if isRate(service.AccessPricingRate) {
+		chargingModels = append(chargingModels, engine.ChargingModel{
+			Service:              service.Name,
 			IncludedInCommitment: service.IncludedInCommitment,
-			RatioPlan:            toEngineRatioPlan(ratingPlan.BalancedRate.Value, ratingPlan.UnbalancedRate.Value),
-		}
+			RatingPlan:           toEngineRatingPlan(service.AccessPricingRate),
+		})
 	}
-	return nil
-}
 
-func toEngineRatingPlan(rate Rate) *engine.RatingPlan {
-	var engineTiers = make([]engine.Tier, 0)
-
-	if len(rate.Thresholds) > 0 {
-		var to int64 = 0
-		for i := len(rate.Thresholds) - 1; i >= 0; i-- {
-			engineTiers = append(engineTiers, engine.Tier{
-				FixedPrice:  rate.Thresholds[i].FixedPrice,
-				LinearPrice: rate.Thresholds[i].LinearPrice,
-				From:        rate.Thresholds[i].Start,
-				To:          to,
-			})
-			to = rate.Thresholds[i].Start
-		}
-	} else {
-		engineTiers = append(engineTiers, engine.Tier{FixedPrice: int64(rate.FixedPrice), LinearPrice: int64(rate.LinearPrice), From: 0, To: 0})
+	if isRatio(service.BalancedRate, service.UnbalancedRate) {
+		chargingModels = append(chargingModels, engine.ChargingModel{
+			Service:              service.Name,
+			IncludedInCommitment: service.IncludedInCommitment,
+			RatioPlan:            toEngineRatioPlan(service.BalancedRate, service.UnbalancedRate),
+		})
 	}
-	return &engine.RatingPlan{Tiers: engineTiers}
+	return chargingModels
 }
 
-func toEngineRatioPlan(balancedRate int64, unbalancedRate int64) *engine.RatioPlan {
-	return &engine.RatioPlan{BalancedRate: balancedRate, UnbalancedRate: unbalancedRate}
+func toEngineRatingPlan(rate []Tier) *engine.RatingPlan {
+	return &engine.RatingPlan{Tiers: toEngineTiers(rate)}
 }
 
-func getRatingPlanForPricing(service Service) RatingPlan {
-	if service.UsagePricing != nil {
-		return service.UsagePricing.RatingPlan
-	} else {
-		return service.AccessPricing.RatingPlan
-	}
+func toEngineRatioPlan(balancedRate []Tier, unbalancedRate []Tier) *engine.RatioPlan {
+	return &engine.RatioPlan{BalancedRate: toEngineTiers(balancedRate), UnbalancedRate: toEngineTiers(unbalancedRate)}
 }
 
-func isRate(rate Rate) bool {
-	return (len(rate.Thresholds) > 0 || rate.FixedPrice > 0 || rate.LinearPrice > 0)
+func isRate(rate []Tier) bool {
+	return (len(rate) > 0)
 }
 
-func isRatio(balanced BalancedRate, unbalanced BalancedRate) bool {
-	return (balanced.Value > 0 || unbalanced.Value > 0)
+func isRatio(balanced []Tier, unbalanced []Tier) bool {
+	return (len(balanced) > 0 || len(unbalanced) > 0)
 }
 
 func toEngineCondition(condition Condition) engine.Condition {
 	switch c := condition.SelectedConditionName; c {
 	case ContractRevenue:
-		return engine.Condition{Type: engine.ContractRevenue, Value: condition.SelectedCondition.Value}
-	case DiscountRevenue:
-		return engine.Condition{Type: engine.DiscountRevenue, Value: condition.SelectedCondition.Value}
+		return engine.Condition{Type: engine.ContractRevenue, Value: condition.SelectedCondition.CommitmentsValue}
+	case DealRevenue:
+		return engine.Condition{Type: engine.DiscountRevenue, Value: condition.SelectedCondition.CommitmentsValue}
 	default:
 		return engine.Condition{Type: engine.Unconditional}
 	}
+}
+
+func toEngineTiers(tiers []Tier) []engine.Tier {
+	var engineTiers = make([]engine.Tier, 0)
+
+	if len(tiers) > 0 {
+		var to int64 = 0
+		for i := len(tiers) - 1; i >= 0; i-- {
+			engineTiers = append(engineTiers, engine.Tier{
+				FixedPrice:  tiers[i].FixedPrice,
+				LinearPrice: tiers[i].LinearPrice,
+				From:        tiers[i].Threshold,
+				To:          to,
+			})
+			to = tiers[i].Threshold
+		}
+	}
+	return engineTiers
 }
