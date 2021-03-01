@@ -15,6 +15,6 @@ func TestSumTiers(t *testing.T) {
 		{From: 1000, To: 1500, FixedPrice: 100, LinearPrice: 0},
 		{From: 1500, To: INF, FixedPrice: 100, LinearPrice: 2},
 	}}
-	result := r.Calculate(2500, 1)
+	result := r.Calculate(2500, "min")
 	assert.Equal(t, int64(4200), result, "Result should add up to 4200, but was %v", result)
 }

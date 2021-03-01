@@ -9,7 +9,7 @@ type RatioPlan struct {
 }
 
 // Calculate , calculates the deal value for the ratioplan.
-func (rp *RatioPlan) Calculate(h Usage, v Usage, unit Unit) float32 {
+func (rp *RatioPlan) Calculate(h Usage, v Usage, unit Unit) float64 {
 	balancedVolume := min(h.Volume, v.Volume)
 	unbalancedVolume := max(0, h.Volume-balancedVolume)
 	result := calculate(rp.BalancedRate, balancedVolume, unit)
@@ -20,8 +20,8 @@ func (rp *RatioPlan) Calculate(h Usage, v Usage, unit Unit) float32 {
 }
 
 //Calculate sums the result of all tiers over the input usage.
-func calculate(tiers []Tier, vol float32, unit Unit) float32 {
-	sum := float32(0)
+func calculate(tiers []Tier, vol float64, unit Unit) float64 {
+	sum := float64(0)
 	for _, tier := range tiers {
 		sum += tier.Calculate(vol, unit)
 	}

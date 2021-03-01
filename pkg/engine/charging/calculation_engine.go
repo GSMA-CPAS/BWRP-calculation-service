@@ -20,7 +20,7 @@ type ContractPart struct {
 // Condition contains the discount condition
 type Condition struct {
 	Type           int
-	Value          int64
+	Value          float64
 	Currency       string
 	IncludingTaxes bool
 }
@@ -44,8 +44,8 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 		IntermediateResults: make([]IntermediateResult, 0),
 	}
 	for _, part := range contract.Parts {
-		var inCommitmentValue float32 = 0
-		var aggregatedChargeHome float32 = 0
+		var inCommitmentValue float64 = 0
+		var aggregatedChargeHome float64 = 0
 		for _, group := range part.ServiceGroups {
 			for _, model := range group.ChargingModels {
 				var intermediateResult IntermediateResult
@@ -66,10 +66,10 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				}
 			}
 		}
-		if part.Condition.Type == DiscountRevenue && inCommitmentValue < float32(part.Condition.Value) {
+		if part.Condition.Type == DiscountRevenue && inCommitmentValue < float64(part.Condition.Value) {
 			result.IntermediateResults = []IntermediateResult{}
 		}
-		if part.Condition.Type == ContractRevenue && aggregatedChargeHome < float32(part.Condition.Value) {
+		if part.Condition.Type == ContractRevenue && aggregatedChargeHome < float64(part.Condition.Value) {
 			result.IntermediateResults = []IntermediateResult{}
 		}
 	}
