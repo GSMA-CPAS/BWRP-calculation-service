@@ -49,10 +49,11 @@ func main() {
 // @Summary Calculate the dealvalue
 // @Description Calculate the deal value by getting the contract and usage data
 // @Tags root
-// @Accept */*
+// @Accept json
 // @Produce json
+// @Param request body models.CalculateRequest true "Discount agreements and usage data"
 // @Success 200 {object} models.Result
-// @Router / [post]
+// @Router /calculate [post]
 func Calculate(c echo.Context) error {
 	var e engine.CalculationEngine
 	var usage engine.AggregatedUsage

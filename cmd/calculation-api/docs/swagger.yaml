@@ -1,9 +1,36 @@
 basePath: /
 definitions:
+  models.CalculateRequest:
+    properties:
+      discounts:
+        additionalProperties:
+          $ref: '#/definitions/models.DiscountModel'
+        type: object
+      usage:
+        items:
+          $ref: '#/definitions/models.UsageData'
+        type: array
+    type: object
+  models.Condition:
+    properties:
+      commitment:
+        $ref: '#/definitions/models.SelectedCondition'
+      kind:
+        type: string
+    type: object
+  models.DiscountModel:
+    properties:
+      condition:
+        $ref: '#/definitions/models.Condition'
+      serviceGroups:
+        items:
+          $ref: '#/definitions/models.ServiceGroup'
+        type: array
+    type: object
   models.IntermediateResult:
     properties:
       dealValue:
-        type: integer
+        type: string
       homeTadigs:
         items:
           type: string
@@ -15,12 +42,102 @@ definitions:
           type: string
         type: array
     type: object
+  models.Pricing:
+    properties:
+      ratingPlan:
+        $ref: '#/definitions/models.RatingPlan'
+      unit:
+        type: integer
+    type: object
+  models.Rate:
+    properties:
+      fixedPrice:
+        type: string
+      linearPrice:
+        type: string
+      thresholds:
+        items:
+          $ref: '#/definitions/models.Tier'
+        type: array
+    type: object
+  models.RatingPlan:
+    properties:
+      balancedRate:
+        $ref: '#/definitions/models.Rate'
+      kind:
+        type: string
+      rate:
+        $ref: '#/definitions/models.Rate'
+      unbalancedRate:
+        $ref: '#/definitions/models.Rate'
+    type: object
   models.Result:
     properties:
       intermediateResults:
         items:
           $ref: '#/definitions/models.IntermediateResult'
         type: array
+    type: object
+  models.SelectedCondition:
+    properties:
+      currency:
+        type: string
+      includingTaxes:
+        type: boolean
+      value:
+        type: string
+    type: object
+  models.Service:
+    properties:
+      accessPricing:
+        $ref: '#/definitions/models.Pricing'
+      includedInCommitment:
+        type: boolean
+      service:
+        type: string
+      usagePricing:
+        $ref: '#/definitions/models.Pricing'
+    type: object
+  models.ServiceGroup:
+    properties:
+      homeTadigs:
+        items:
+          type: string
+        type: array
+      services:
+        items:
+          $ref: '#/definitions/models.Service'
+        type: array
+      visitorTadigs:
+        items:
+          type: string
+        type: array
+    type: object
+  models.Tier:
+    properties:
+      fixedPrice:
+        type: string
+      linearPrice:
+        type: string
+      start:
+        type: string
+    type: object
+  models.UsageData:
+    properties:
+      charges:
+        type: string
+      homeTadig:
+        type: string
+      service:
+        type: string
+      taxes:
+        type: string
+      units:
+        type: string
+      usage:
+        type: string
+      visitorTadig:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -34,11 +151,18 @@ info:
   title: Calculation API
   version: "1.0"
 paths:
-  /:
+  /calculate:
     post:
       consumes:
-      - '*/*'
+      - application/json
       description: Calculate the deal value by getting the contract and usage data
+      parameters:
+      - description: Discount agreements and usage data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CalculateRequest'
       produces:
       - application/json
       responses:

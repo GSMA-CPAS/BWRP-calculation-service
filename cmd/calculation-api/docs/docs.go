@@ -31,11 +31,11 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/": {
+        "/calculate": {
             "post": {
                 "description": "Calculate the deal value by getting the contract and usage data",
                 "consumes": [
-                    "*/*"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -44,6 +44,17 @@ var doc = `{
                     "root"
                 ],
                 "summary": "Calculate the dealvalue",
+                "parameters": [
+                    {
+                        "description": "Discount agreements and usage data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculateRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -56,11 +67,53 @@ var doc = `{
         }
     },
     "definitions": {
+        "models.CalculateRequest": {
+            "type": "object",
+            "properties": {
+                "discounts": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/models.DiscountModel"
+                    }
+                },
+                "usage": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UsageData"
+                    }
+                }
+            }
+        },
+        "models.Condition": {
+            "type": "object",
+            "properties": {
+                "commitment": {
+                    "$ref": "#/definitions/models.SelectedCondition"
+                },
+                "kind": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DiscountModel": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "$ref": "#/definitions/models.Condition"
+                },
+                "serviceGroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ServiceGroup"
+                    }
+                }
+            }
+        },
         "models.IntermediateResult": {
             "type": "object",
             "properties": {
                 "dealValue": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "homeTadigs": {
                     "type": "array",
@@ -79,6 +132,51 @@ var doc = `{
                 }
             }
         },
+        "models.Pricing": {
+            "type": "object",
+            "properties": {
+                "ratingPlan": {
+                    "$ref": "#/definitions/models.RatingPlan"
+                },
+                "unit": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Rate": {
+            "type": "object",
+            "properties": {
+                "fixedPrice": {
+                    "type": "string"
+                },
+                "linearPrice": {
+                    "type": "string"
+                },
+                "thresholds": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Tier"
+                    }
+                }
+            }
+        },
+        "models.RatingPlan": {
+            "type": "object",
+            "properties": {
+                "balancedRate": {
+                    "$ref": "#/definitions/models.Rate"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "rate": {
+                    "$ref": "#/definitions/models.Rate"
+                },
+                "unbalancedRate": {
+                    "$ref": "#/definitions/models.Rate"
+                }
+            }
+        },
         "models.Result": {
             "type": "object",
             "properties": {
@@ -87,6 +185,100 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.IntermediateResult"
                     }
+                }
+            }
+        },
+        "models.SelectedCondition": {
+            "type": "object",
+            "properties": {
+                "currency": {
+                    "type": "string"
+                },
+                "includingTaxes": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Service": {
+            "type": "object",
+            "properties": {
+                "accessPricing": {
+                    "$ref": "#/definitions/models.Pricing"
+                },
+                "includedInCommitment": {
+                    "type": "boolean"
+                },
+                "service": {
+                    "type": "string"
+                },
+                "usagePricing": {
+                    "$ref": "#/definitions/models.Pricing"
+                }
+            }
+        },
+        "models.ServiceGroup": {
+            "type": "object",
+            "properties": {
+                "homeTadigs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Service"
+                    }
+                },
+                "visitorTadigs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.Tier": {
+            "type": "object",
+            "properties": {
+                "fixedPrice": {
+                    "type": "string"
+                },
+                "linearPrice": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UsageData": {
+            "type": "object",
+            "properties": {
+                "charges": {
+                    "type": "string"
+                },
+                "homeTadig": {
+                    "type": "string"
+                },
+                "service": {
+                    "type": "string"
+                },
+                "taxes": {
+                    "type": "string"
+                },
+                "units": {
+                    "type": "string"
+                },
+                "usage": {
+                    "type": "string"
+                },
+                "visitorTadig": {
+                    "type": "string"
                 }
             }
         }
