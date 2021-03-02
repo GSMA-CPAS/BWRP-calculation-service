@@ -124,10 +124,10 @@ func toEngineCondition(condition Condition) engine.Condition {
 	switch c := condition.SelectedConditionName; c {
 	case ContractRevenue:
 		v, _ := strconv.ParseFloat(condition.SelectedCondition.CommitmentsValue, 64)
-		return engine.Condition{Type: engine.ContractRevenue, Value: v}
+		return engine.Condition{Type: engine.ContractRevenue, Value: v, IncludingTaxes: condition.SelectedCondition.IncludingTaxes}
 	case DealRevenue:
 		v, _ := strconv.ParseFloat(condition.SelectedCondition.CommitmentsValue, 64)
-		return engine.Condition{Type: engine.DiscountRevenue, Value: v}
+		return engine.Condition{Type: engine.DiscountRevenue, Value: v, IncludingTaxes: condition.SelectedCondition.IncludingTaxes}
 	default:
 		return engine.Condition{Type: engine.Unconditional}
 	}

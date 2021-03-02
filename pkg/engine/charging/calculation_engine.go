@@ -52,6 +52,9 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				h := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs)
 				if part.Condition.Type == ContractRevenue {
 					aggregatedChargeHome += h.Charge
+					if part.Condition.IncludingTaxes == true {
+						aggregatedChargeHome += h.Tax
+					}
 					intermediateResult.DealValue = h.Charge
 				} else {
 					v := aggUsage.Aggregate(model.Service, group.VisitorTadigs, group.HomeTadigs)
@@ -66,10 +69,10 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				}
 			}
 		}
-		if part.Condition.Type == DiscountRevenue && inCommitmentValue < float64(part.Condition.Value) {
+		if part.Condition.Type == DiscountRevenue && inCommitmentValue < part.Condition.Value {
 			result.IntermediateResults = []IntermediateResult{}
 		}
-		if part.Condition.Type == ContractRevenue && aggregatedChargeHome < float64(part.Condition.Value) {
+		if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
 			result.IntermediateResults = []IntermediateResult{}
 		}
 	}

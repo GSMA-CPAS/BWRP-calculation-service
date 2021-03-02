@@ -31,7 +31,7 @@ func (a AggregatedUsage) Aggregate(service string, htadigs []string, vtadigs []s
 			usage := a[key]
 			volume = volume + usage.Volume
 			charge = charge + usage.Charge
-			tax = charge + usage.Tax
+			tax = tax + usage.Tax
 		}
 	}
 	return Usage{volume, "", charge, tax, htadigs, vtadigs}

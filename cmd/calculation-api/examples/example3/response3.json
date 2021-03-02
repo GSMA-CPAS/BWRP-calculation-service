@@ -1,0 +1,64 @@
+{
+    "intermediateResults": [
+        {
+            "service": "SMSMO",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "5000"
+        },
+        {
+            "service": "MOC International",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "3000"
+        },
+        {
+            "service": "VOLTE",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "30000"
+        },
+        {
+            "service": "MOC EU",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "60000"
+        },
+        {
+            "service": "NB-IOT",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "26000"
+        }
+    ]
+}

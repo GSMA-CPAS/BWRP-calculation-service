@@ -1,0 +1,124 @@
+{
+    "intermediateResults": [
+        {
+            "service": "SMSMO",
+            "homeTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "visitorTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "dealValue": "12000"
+        },
+        {
+            "service": "MOC International",
+            "homeTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "visitorTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "dealValue": "1500"
+        },
+        {
+            "service": "VOLTE",
+            "homeTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "visitorTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "dealValue": "51000"
+        },
+        {
+            "service": "MOC EU",
+            "homeTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "visitorTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "dealValue": "72000"
+        },
+        {
+            "service": "NB-IOT",
+            "homeTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "visitorTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "dealValue": "17000"
+        },
+        {
+            "service": "SMSMO",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "5000"
+        },
+        {
+            "service": "MOC International",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "3000"
+        },
+        {
+            "service": "VOLTE",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "30000"
+        },
+        {
+            "service": "MOC EU",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "60000"
+        },
+        {
+            "service": "NB-IOT",
+            "homeTadigs": [
+                "AAZVF",
+                "AAZTD"
+            ],
+            "visitorTadigs": [
+                "AAZOR",
+                "GRCPF"
+            ],
+            "dealValue": "26000"
+        }
+    ]
+}
