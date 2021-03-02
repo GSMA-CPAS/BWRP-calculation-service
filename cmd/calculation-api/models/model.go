@@ -8,7 +8,14 @@ const (
 
 // Result contains the results of the calculation.
 type Result struct {
+	Header              Header               `json:"header"`
 	IntermediateResults []IntermediateResult `json:"intermediateResults"`
+}
+
+// Header contains the calculation versioning information
+type Header struct {
+	Version string `json:"version"`
+	Hash    string `json:"md5hash"`
 }
 
 // IntermediateResult contains the results per service
