@@ -27,6 +27,13 @@ definitions:
           $ref: '#/definitions/models.ServiceGroup'
         type: array
     type: object
+  models.Header:
+    properties:
+      md5hash:
+        type: string
+      version:
+        type: string
+    type: object
   models.IntermediateResult:
     properties:
       dealValue:
@@ -73,6 +80,8 @@ definitions:
     type: object
   models.Result:
     properties:
+      header:
+        $ref: '#/definitions/models.Header'
       intermediateResults:
         items:
           $ref: '#/definitions/models.IntermediateResult'
@@ -171,6 +180,22 @@ paths:
           schema:
             $ref: '#/definitions/models.Result'
       summary: Calculate the dealvalue
+      tags:
+      - root
+  /status:
+    get:
+      consumes:
+      - application/json
+      description: Provides the version and hash of the executable code of the calculation
+        engine
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Header'
+      summary: Provide the status of the calculation engine
       tags:
       - root
 schemes:

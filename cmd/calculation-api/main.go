@@ -53,11 +53,24 @@ func main() {
 
 	//Handlers
 	e.POST("/calculate", Calculate)
+	e.GET("/status", Status)
 
 	//Swagger
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.Logger.Fatal(e.Start(":8080"))
+}
+
+// Status provides the version and hash of the executable code of the calculation engine.  godoc
+// @Summary Provide the status of the calculation engine
+// @Description Provides the version and hash of the executable code of the calculation engine
+// @Tags root
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.Header
+// @Router /status [get]
+func Status(c echo.Context) error {
+	return c.JSON(http.StatusOK, models.Header{Version: version, Hash: executableHash})
 }
 
 // Calculate calculate the deal value of a contract.  godoc

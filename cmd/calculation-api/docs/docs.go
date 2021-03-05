@@ -64,6 +64,29 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/status": {
+            "get": {
+                "description": "Provides the version and hash of the executable code of the calculation engine",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "root"
+                ],
+                "summary": "Provide the status of the calculation engine",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Header"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -106,6 +129,17 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.ServiceGroup"
                     }
+                }
+            }
+        },
+        "models.Header": {
+            "type": "object",
+            "properties": {
+                "md5hash": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
                 }
             }
         },
@@ -180,6 +214,9 @@ var doc = `{
         "models.Result": {
             "type": "object",
             "properties": {
+                "header": {
+                    "$ref": "#/definitions/models.Header"
+                },
                 "intermediateResults": {
                     "type": "array",
                     "items": {
