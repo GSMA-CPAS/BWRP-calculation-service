@@ -1,9 +1,13 @@
 package models
 
+import "math"
+
 const (
-	Unconditional   string = "Unconditional"
-	ContractRevenue string = "Contract Revenue Commitment"
-	DealRevenue     string = "Deal Revenue Commitment"
+	Unconditional             string  = "Unconditional"
+	ContractRevenue           string  = "Contract Revenue Commitment"
+	DealRevenue               string  = "Deal Revenue Commitment"
+	RatingPlanKindBackToFirst string  = "Threshold - back to first"
+	INF                       float64 = math.MaxFloat64
 )
 
 // Result contains the results of the calculation.

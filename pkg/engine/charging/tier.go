@@ -10,23 +10,16 @@ type Tier struct {
 	To          float64
 	FixedPrice  float64
 	LinearPrice float64
-	LinearUnit  Unit
+	Unit        Unit
 }
 
 //Calculate performs the rating formula and also takes care of the threshold.
 //when the volume is outside of the range of the threshold the result is 0, this way
 //a simpel sum over all tiers can be made.
 func (t *Tier) Calculate(volume float64, unit Unit) float64 {
-	var adjustedVolume float64
 	deltaThreshold := t.To - t.From
-
-	if deltaThreshold > 0 {
-		adjustedVolume = max(0, min((volume-t.From), deltaThreshold))
-	} else {
-		adjustedVolume = max(0, (volume - t.From))
-	}
-
-	if adjustedVolume == 0 {
+	adjustedVolume := max(0, min((volume-t.From), deltaThreshold))
+	if adjustedVolume <= 0 {
 		return 0
 	}
 	rate := t.FixedPrice + t.LinearPrice*adjustedVolume

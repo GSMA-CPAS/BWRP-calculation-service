@@ -18,6 +18,7 @@ var model1 = Contract{
 					{
 						Service: "SMS",
 						RatingPlan: &RatingPlan{
+							false,
 							[]Tier{
 								{From: 0, To: 1500, LinearPrice: 5},
 							},
@@ -26,6 +27,7 @@ var model1 = Contract{
 					{
 						Service: "MOOC",
 						RatingPlan: &RatingPlan{
+							false,
 							[]Tier{
 								{From: 0, To: 1500, FixedPrice: 1500},
 							},
@@ -43,6 +45,7 @@ var model1 = Contract{
 					{
 						Service: "SMS",
 						RatingPlan: &RatingPlan{
+							false,
 							[]Tier{
 								{From: 0, To: 1500, FixedPrice: 5000},
 							},
@@ -51,6 +54,7 @@ var model1 = Contract{
 					{
 						Service: "MOOC",
 						RatingPlan: &RatingPlan{
+							false,
 							[]Tier{
 								{From: 0, To: 1500, FixedPrice: 3500},
 							},

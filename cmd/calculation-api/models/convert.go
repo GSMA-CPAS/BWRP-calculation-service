@@ -73,17 +73,9 @@ func toEngineChargingModels(service Service) []engine.ChargingModel {
 		chargingModels = append(chargingModels, engine.ChargingModel{
 			Service:              service.Service,
 			IncludedInCommitment: service.IncludedInCommitment,
-			RatingPlan:           toEngineRatingPlan(ratingPlan.Rate),
+			RatingPlan:           toEngineRatingPlan(ratingPlan.Rate, (ratingPlan.Kind == RatingPlanKindBackToFirst)),
 		})
 	}
-	// if isRate(service.AccessPricingRate) {
-	// 	chargingModels = append(chargingModels, engine.ChargingModel{
-	// 		Service:              service.Name,
-	// 		IncludedInCommitment: service.IncludedInCommitment,
-	// 		RatingPlan:           toEngineRatingPlan(service.AccessPricingRate),
-	// 	})
-	// }
-
 	if isRatio(ratingPlan.BalancedRate, ratingPlan.UnbalancedRate) {
 		chargingModels = append(chargingModels, engine.ChargingModel{
 			Service:              service.Service,
@@ -94,8 +86,8 @@ func toEngineChargingModels(service Service) []engine.ChargingModel {
 	return chargingModels
 }
 
-func toEngineRatingPlan(rate Rate) *engine.RatingPlan {
-	return &engine.RatingPlan{Tiers: toEngineTiers(rate.Thresholds)}
+func toEngineRatingPlan(rate Rate, isBackToFirst bool) *engine.RatingPlan {
+	return &engine.RatingPlan{IsBackToFirst: isBackToFirst, Tiers: toEngineTiers(rate.Thresholds)}
 }
 
 func toEngineRatioPlan(balancedRate Rate, unbalancedRate Rate) *engine.RatioPlan {
@@ -134,19 +126,19 @@ func toEngineCondition(condition Condition) engine.Condition {
 }
 
 func toEngineTiers(tiers []Tier) []engine.Tier {
-	var engineTiers = make([]engine.Tier, 0)
+	var engineTiers = make([]engine.Tier, len(tiers))
 	if len(tiers) > 0 {
-		to := float64(0)
+		to := INF
 		for i := len(tiers) - 1; i >= 0; i-- {
 			engineFixedPrice, _ := strconv.ParseFloat(tiers[i].FixedPrice, 64)
 			engineLinearPrice, _ := strconv.ParseFloat(tiers[i].LinearPrice, 64)
 			engineFrom, _ := strconv.ParseFloat(tiers[i].Start, 64)
-			engineTiers = append(engineTiers, engine.Tier{
+			engineTiers[i] = engine.Tier{
 				FixedPrice:  engineFixedPrice,
 				LinearPrice: engineLinearPrice,
 				From:        engineFrom,
 				To:          to,
-			})
+			}
 			to = engineFrom
 		}
 	}
