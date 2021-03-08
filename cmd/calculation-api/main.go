@@ -95,8 +95,8 @@ func Calculate(c echo.Context) error {
 	var request models.CalculateRequest
 
 	if err := json.Unmarshal(bodyBytes, &request); err != nil {
-		fmt.Printf("Error json unmarshal request %s to QueryRequest: %s", string(bodyBytes), err.Error())
-		return c.JSON(http.StatusBadRequest, nil)
+		fmt.Printf("Error json unmarshal request %s to QueryRequest: %s\n", string(bodyBytes), err.Error())
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	usage = models.ConvertToEngineAggregatedUsage(request.Usage)
