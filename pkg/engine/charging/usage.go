@@ -21,7 +21,6 @@ type ServiceTadig struct {
 
 type AggregatedUsage map[ServiceTadig]Usage
 
-// TODO take account of units and currency? (Not in MVP1)
 //Aggregate gets all the usage for every service / tadig combination and then aggregates them
 func (a AggregatedUsage) Aggregate(service string, htadigs []string, vtadigs []string) Usage {
 	var volume, charge, tax float64

@@ -2,8 +2,6 @@ package engine
 
 // RatioPlan is the type to hold both a balanced and an unbalanced plan.
 type RatioPlan struct {
-	// BalancedRate   int64
-	// UnbalancedRate int64
 	BalancedRate   []Tier
 	UnbalancedRate []Tier
 }
