@@ -8,6 +8,7 @@ type Usage struct {
 	Tax           float64
 	HomeTadigs    []string
 	VisitorTadigs []string
+	Direction     string
 }
 
 //Unit defines the calculation units
@@ -24,6 +25,7 @@ type AggregatedUsage map[ServiceTadig]Usage
 //Aggregate gets all the usage for every service / tadig combination and then aggregates them
 func (a AggregatedUsage) Aggregate(service string, htadigs []string, vtadigs []string) Usage {
 	var volume, charge, tax float64
+	var direction string
 	for _, h := range htadigs {
 		for _, v := range vtadigs {
 			key := ServiceTadig{service, h, v}
@@ -31,7 +33,11 @@ func (a AggregatedUsage) Aggregate(service string, htadigs []string, vtadigs []s
 			volume = volume + usage.Volume
 			charge = charge + usage.Charge
 			tax = tax + usage.Tax
+			if len(usage.Direction) > 1 {
+				direction = usage.Direction
+			}
+
 		}
 	}
-	return Usage{volume, "", charge, tax, htadigs, vtadigs}
+	return Usage{volume, "", charge, tax, htadigs, vtadigs, direction}
 }

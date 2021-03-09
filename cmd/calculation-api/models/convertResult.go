@@ -23,6 +23,7 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 		}
 		ir[i].HomeTadigs = item.HomeTadigs
 		ir[i].VisitorTadigs = item.VisitorTadigs
+		ir[i].Type = item.Direction
 	}
 	return ir
 }

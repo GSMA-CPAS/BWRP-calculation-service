@@ -28,17 +28,19 @@ type IntermediateResult struct {
 	HomeTadigs    []string `json:"homeTadigs"`
 	VisitorTadigs []string `json:"visitorTadigs"`
 	DealValue     string   `json:"dealValue"`
+	Type          string   `json:"type"`
 }
 
 //CalculateRequest contains the Usage data and discount models in the API request body
 type CalculateRequest struct {
-	Usage          []UsageData              `json:"usage"`
+	Usage          Usage                    `json:"usage"`
 	DiscountModels map[string]DiscountModel `json:"discounts"`
 }
 
 //Usage contains usageData records
 type Usage struct {
-	Usage []UsageData `json:"usage"`
+	Inbound  []UsageData `json:"inbound"`
+	Outbound []UsageData `json:"outbound"`
 }
 
 //UsageData contains usageData
@@ -50,6 +52,7 @@ type UsageData struct {
 	Service      string `json:"service"`
 	HomeTadig    string `json:"homeTadig"`
 	VisitorTadig string `json:"visitorTadig"`
+	Direction    string `json:"direction"`
 }
 
 //DiscountModel contains a discount agreement

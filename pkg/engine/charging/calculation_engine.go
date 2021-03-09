@@ -63,6 +63,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				intermediateResult.Service = model.Service
 				intermediateResult.HomeTadigs = group.HomeTadigs
 				intermediateResult.VisitorTadigs = group.VisitorTadigs
+				intermediateResult.Direction = h.Direction
 				result.IntermediateResults = append(result.IntermediateResults, intermediateResult)
 				if model.IncludedInCommitment {
 					inCommitmentValue += intermediateResult.DealValue
