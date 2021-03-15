@@ -47,7 +47,20 @@ func toEngineChargingModels(service Service) []engine.ChargingModel {
 }
 
 func toEngineRatingPlan(rate Rate, isBackToFirst bool) *engine.RatingPlan {
-	return &engine.RatingPlan{IsBackToFirst: isBackToFirst, Tiers: toEngineTiers(rate.Thresholds)}
+	var engineTiers []engine.Tier
+	if len(rate.Thresholds) > 0 {
+		engineTiers = toEngineTiers(rate.Thresholds)
+	} else {
+		f, _ := strconv.ParseFloat(rate.FixedPrice, 64)
+		l, _ := strconv.ParseFloat(rate.LinearPrice, 64)
+		engineTiers = []engine.Tier{engine.Tier{
+			From:        0,
+			To:          INF,
+			FixedPrice:  f,
+			LinearPrice: l,
+		}}
+	}
+	return &engine.RatingPlan{IsBackToFirst: isBackToFirst, Tiers: engineTiers}
 }
 
 func toEngineRatioPlan(balancedRate Rate, unbalancedRate Rate) *engine.RatioPlan {
