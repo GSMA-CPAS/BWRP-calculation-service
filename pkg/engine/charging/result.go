@@ -15,4 +15,5 @@ type IntermediateResult struct {
 	HomeTadigs    []string
 	VisitorTadigs []string
 	DealValue     float64
+	Direction     string
 }

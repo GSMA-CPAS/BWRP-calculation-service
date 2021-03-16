@@ -1,5 +1,6 @@
 package engine
 
+//Uncondtional, ContractRevenue and DiscountRevenue are valid contract conditions
 const (
 	Unconditional = iota
 	ContractRevenue
@@ -39,6 +40,7 @@ type Contract struct {
 
 //Calculate returns the deal value by inputting the aggregate-usage and a contract
 //Go through all the contract parts and charging models
+//Take Contract Revenue and Deal Revenue commitment conditions into account. If condition is not met then no deal
 func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contract) Result {
 	result := Result{
 		IntermediateResults: make([]IntermediateResult, 0),
@@ -46,6 +48,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 	for _, part := range contract.Parts {
 		var inCommitmentValue float64 = 0
 		var aggregatedChargeHome float64 = 0
+		partIntermediateResults := make([]IntermediateResult, 0)
 		for _, group := range part.ServiceGroups {
 			for _, model := range group.ChargingModels {
 				var intermediateResult IntermediateResult
@@ -55,26 +58,26 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 					if part.Condition.IncludingTaxes == true {
 						aggregatedChargeHome += h.Tax
 					}
-					intermediateResult.DealValue = h.Charge
-				} else {
-					v := aggUsage.Aggregate(model.Service, group.VisitorTadigs, group.HomeTadigs)
-					intermediateResult = model.Calculate(h, v)
 				}
+				v := aggUsage.Aggregate(model.Service, group.VisitorTadigs, group.HomeTadigs)
+				intermediateResult = model.Calculate(h, v)
 				intermediateResult.Service = model.Service
 				intermediateResult.HomeTadigs = group.HomeTadigs
 				intermediateResult.VisitorTadigs = group.VisitorTadigs
-				result.IntermediateResults = append(result.IntermediateResults, intermediateResult)
+				intermediateResult.Direction = h.Direction
+				partIntermediateResults = append(partIntermediateResults, intermediateResult)
 				if model.IncludedInCommitment {
 					inCommitmentValue += intermediateResult.DealValue
 				}
 			}
 		}
 		if part.Condition.Type == DiscountRevenue && inCommitmentValue < part.Condition.Value {
-			result.IntermediateResults = []IntermediateResult{}
+			partIntermediateResults = []IntermediateResult{}
 		}
 		if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
-			result.IntermediateResults = []IntermediateResult{}
+			partIntermediateResults = []IntermediateResult{}
 		}
+		result.IntermediateResults = append(result.IntermediateResults, partIntermediateResults...)
 	}
 	return result
 }

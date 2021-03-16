@@ -1,0 +1,112 @@
+{
+    "header": {
+        "version": "0.0.0",
+        "md5hash": "14c65354042f6e88591df39906616afa"
+    },
+    "intermediateResults": [
+        {
+            "service": "SMS MO",
+            "homeTadigs": [
+                "BELMO",
+                "FRAF1"
+            ],
+            "visitorTadigs": [
+                "NLDDT",
+                "DEUD1"
+            ],
+            "dealValue": "66966.06",
+            "type": "inbound"
+        },
+        {
+            "service": "MOC Local",
+            "homeTadigs": [
+                "BELMO",
+                "FRAF1"
+            ],
+            "visitorTadigs": [
+                "NLDDT",
+                "DEUD1"
+            ],
+            "dealValue": "7524.8037",
+            "type": "inbound"
+        },
+        {
+            "service": "GPRS",
+            "homeTadigs": [
+                "BELMO",
+                "FRAF1"
+            ],
+            "visitorTadigs": [
+                "NLDDT",
+                "DEUD1"
+            ],
+            "dealValue": "299827.44950000005",
+            "type": "inbound"
+        },
+        {
+            "service": "MOC Back Home",
+            "homeTadigs": [
+                "BELMO",
+                "FRAF1"
+            ],
+            "visitorTadigs": [
+                "NLDDT",
+                "DEUD1"
+            ],
+            "dealValue": "24386.7948",
+            "type": "inbound"
+        },
+        {
+            "service": "SMS MO",
+            "homeTadigs": [
+                "NLDDT",
+                "DEUD1"
+            ],
+            "visitorTadigs": [
+                "BELMO",
+                "FRAF1"
+            ],
+            "dealValue": "53479.75",
+            "type": "outbound"
+        },
+        {
+            "service": "MOC Local",
+            "homeTadigs": [
+                "NLDDT",
+                "DEUD1"
+            ],
+            "visitorTadigs": [
+                "BELMO",
+                "FRAF1"
+            ],
+            "dealValue": "13608.236",
+            "type": "outbound"
+        },
+        {
+            "service": "GPRS",
+            "homeTadigs": [
+                "NLDDT",
+                "DEUD1"
+            ],
+            "visitorTadigs": [
+                "BELMO",
+                "FRAF1"
+            ],
+            "dealValue": "158534.70630000002",
+            "type": "outbound"
+        },
+        {
+            "service": "MOC Back Home",
+            "homeTadigs": [
+                "NLDDT",
+                "DEUD1"
+            ],
+            "visitorTadigs": [
+                "BELMO",
+                "FRAF1"
+            ],
+            "dealValue": "41350.601599999995",
+            "type": "outbound"
+        }
+    ]
+}
