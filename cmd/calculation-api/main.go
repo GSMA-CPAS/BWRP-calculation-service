@@ -21,7 +21,7 @@ import (
 
 var executableHash string
 
-const version = "0.0.0"
+const version = "0.0.1"
 
 // @title Calculation API
 // @version 1.0
