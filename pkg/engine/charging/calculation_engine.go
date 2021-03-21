@@ -43,8 +43,10 @@ type Contract struct {
 //Take Contract Revenue and Deal Revenue commitment conditions into account. If condition is not met then no deal
 func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contract) Result {
 	result := Result{
+		Deal:                make(map[string]bool, len(contract.Parts)),
 		IntermediateResults: make([]IntermediateResult, 0),
 	}
+
 	for _, part := range contract.Parts {
 		var inCommitmentValue float64 = 0
 		var aggregatedChargeHome float64 = 0
@@ -64,18 +66,23 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				intermediateResult.Service = model.Service
 				intermediateResult.HomeTadigs = group.HomeTadigs
 				intermediateResult.VisitorTadigs = group.VisitorTadigs
-				intermediateResult.Direction = h.Direction
-				partIntermediateResults = append(partIntermediateResults, intermediateResult)
+				if len(h.Direction) > 0 {
+					intermediateResult.Direction = h.Direction
+					partIntermediateResults = append(partIntermediateResults, intermediateResult)
+				}
 				if model.IncludedInCommitment {
 					inCommitmentValue += intermediateResult.DealValue
 				}
 			}
 		}
 		if part.Condition.Type == DiscountRevenue && inCommitmentValue < part.Condition.Value {
-			partIntermediateResults = []IntermediateResult{}
-		}
-		if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
-			partIntermediateResults = []IntermediateResult{}
+			result.Deal[part.Party] = false
+			// partIntermediateResults = []IntermediateResult{}
+		} else if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
+			result.Deal[part.Party] = false
+			// partIntermediateResults = []IntermediateResult{}
+		} else {
+			result.Deal[part.Party] = true
 		}
 		result.IntermediateResults = append(result.IntermediateResults, partIntermediateResults...)
 	}

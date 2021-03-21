@@ -9,6 +9,7 @@ import (
 // ConvertFromEngineResult convert from the engine type to the api type
 func ConvertFromEngineResult(result engine.Result) Result {
 	return Result{
+		Deal:                result.Deal,
 		IntermediateResults: ConvertFromEngineIntermediateResults(result.IntermediateResults),
 	}
 }

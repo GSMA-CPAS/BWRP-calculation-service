@@ -13,6 +13,7 @@ const (
 // Result contains the results of the calculation.
 type Result struct {
 	Header              Header               `json:"header"`
+	Deal                map[string]bool      `json:"deal"`
 	IntermediateResults []IntermediateResult `json:"intermediateResults"`
 }
 

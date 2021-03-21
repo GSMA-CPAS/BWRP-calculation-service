@@ -6,6 +6,7 @@ package engine
 
 // Result contains the results of the calculation.
 type Result struct {
+	Deal                map[string]bool
 	IntermediateResults []IntermediateResult
 }
 
