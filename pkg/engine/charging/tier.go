@@ -4,6 +4,10 @@
 
 package engine
 
+import (
+	"math"
+)
+
 //Tier defines a calculation function with a threshold
 type Tier struct {
 	From        float64
@@ -18,24 +22,10 @@ type Tier struct {
 //a simpel sum over all tiers can be made.
 func (t *Tier) Calculate(volume float64, unit Unit) float64 {
 	deltaThreshold := t.To - t.From
-	adjustedVolume := max(0, min((volume-t.From), deltaThreshold))
+	adjustedVolume := math.Max(0, math.Min((volume-t.From), deltaThreshold))
 	if adjustedVolume <= 0 {
 		return 0
 	}
 	rate := t.FixedPrice + t.LinearPrice*adjustedVolume
 	return rate
-}
-
-func max(x, y float64) float64 {
-	if x > y {
-		return x
-	}
-	return y
-}
-
-func min(x, y float64) float64 {
-	if x < y {
-		return x
-	}
-	return y
 }
