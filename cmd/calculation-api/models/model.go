@@ -13,8 +13,16 @@ const (
 // Result contains the results of the calculation.
 type Result struct {
 	Header              Header               `json:"header"`
-	Deal                map[string]bool      `json:"deal"`
+	Total               []Deal               `json:"total"`
 	IntermediateResults []IntermediateResult `json:"intermediateResults"`
+}
+
+// Deal contains the details of the deal.
+type Deal struct {
+	HomeTadigs        []string `json:"homeTadigs"`
+	VisitorTadigs     []string `json:"visitorTadigs"`
+	CommitmentReached bool     `json:"commitmentReached"`
+	Value             string   `json:"value"`
 }
 
 // Header contains the calculation versioning information

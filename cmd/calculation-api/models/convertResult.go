@@ -9,7 +9,7 @@ import (
 // ConvertFromEngineResult convert from the engine type to the api type
 func ConvertFromEngineResult(result engine.Result) Result {
 	return Result{
-		Deal:                result.Deal,
+		Total:               ConvertFromEngineTotal(result.Total),
 		IntermediateResults: ConvertFromEngineIntermediateResults(result.IntermediateResults),
 	}
 }
@@ -27,4 +27,13 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 		ir[i].Type = item.Direction
 	}
 	return ir
+}
+
+// ConvertFromEngineTotal convert the total result form the engine to the API model
+func ConvertFromEngineTotal(total []engine.Deal) []Deal {
+	result := make([]Deal, 0)
+	for _, v := range total {
+		result = append(result, Deal{HomeTadigs: v.HomeTadigs, VisitorTadigs: v.VisitorTadigs, CommitmentReached: v.CommitmentReached, Value: strconv.FormatFloat(v.Value, 'f', -1, 64)})
+	}
+	return result
 }

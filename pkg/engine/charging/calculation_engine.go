@@ -43,15 +43,18 @@ type Contract struct {
 //Take Contract Revenue and Deal Revenue commitment conditions into account. If condition is not met then no deal
 func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contract) Result {
 	result := Result{
-		Deal:                make(map[string]bool, len(contract.Parts)),
+		Total:               make([]Deal, 0),
 		IntermediateResults: make([]IntermediateResult, 0),
 	}
 
 	for _, part := range contract.Parts {
-		var inCommitmentValue float64 = 0
-		var aggregatedChargeHome float64 = 0
+		var inCommitmentValue, aggregatedChargeHome, aggregatedDealValue float64
 		partIntermediateResults := make([]IntermediateResult, 0)
+		homeTadigs := make([]string, 0)
+		visitorTadigs := make([]string, 0)
 		for _, group := range part.ServiceGroups {
+			homeTadigs = append(homeTadigs, group.HomeTadigs...)
+			visitorTadigs = append(visitorTadigs, group.VisitorTadigs...)
 			for _, model := range group.ChargingModels {
 				var intermediateResult IntermediateResult
 				h := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs)
@@ -66,6 +69,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				intermediateResult.Service = model.Service
 				intermediateResult.HomeTadigs = group.HomeTadigs
 				intermediateResult.VisitorTadigs = group.VisitorTadigs
+				aggregatedDealValue += intermediateResult.DealValue
 				if len(h.Direction) > 0 {
 					intermediateResult.Direction = h.Direction
 					partIntermediateResults = append(partIntermediateResults, intermediateResult)
@@ -75,16 +79,27 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				}
 			}
 		}
-		if part.Condition.Type == DiscountRevenue && inCommitmentValue < part.Condition.Value {
-			result.Deal[part.Party] = false
-			// partIntermediateResults = []IntermediateResult{}
-		} else if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
-			result.Deal[part.Party] = false
-			// partIntermediateResults = []IntermediateResult{}
-		} else {
-			result.Deal[part.Party] = true
-		}
 		result.IntermediateResults = append(result.IntermediateResults, partIntermediateResults...)
+		if part.Condition.Type == DiscountRevenue && inCommitmentValue < part.Condition.Value {
+			result.Total = append(result.Total, Deal{HomeTadigs: toUniqueTadigs(homeTadigs), VisitorTadigs: toUniqueTadigs(visitorTadigs), CommitmentReached: false, Value: part.Condition.Value})
+		} else if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
+			result.Total = append(result.Total, Deal{HomeTadigs: toUniqueTadigs(homeTadigs), VisitorTadigs: toUniqueTadigs(visitorTadigs), CommitmentReached: false, Value: part.Condition.Value})
+		} else {
+			result.Total = append(result.Total, Deal{HomeTadigs: toUniqueTadigs(homeTadigs), VisitorTadigs: toUniqueTadigs(visitorTadigs), CommitmentReached: true, Value: aggregatedDealValue})
+		}
+
 	}
 	return result
+}
+
+func toUniqueTadigs(tadigs []string) []string {
+	keys := make(map[string]bool)
+	list := make([]string, 0)
+	for _, tadig := range tadigs {
+		if _, value := keys[tadig]; !value {
+			keys[tadig] = true
+			list = append(list, tadig)
+		}
+	}
+	return list
 }
