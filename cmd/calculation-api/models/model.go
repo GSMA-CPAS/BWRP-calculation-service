@@ -99,7 +99,7 @@ type Service struct {
 }
 
 type Pricing struct {
-	Unit       int        `json:"unit"`
+	Unit       string     `json:"unit"`
 	RatingPlan RatingPlan `json:"ratingPlan"`
 }
 
