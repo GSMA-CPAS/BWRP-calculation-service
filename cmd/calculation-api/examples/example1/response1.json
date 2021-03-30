@@ -1,4 +1,8 @@
 {
+    "header": {
+        "version": "0.0.1",
+        "md5hash": "c051d8e8af623877ff6a110fc98d78bf"
+    },
     "intermediateResults": [
         {
             "service": "SMSMO",
@@ -10,7 +14,9 @@
                 "AAZVF",
                 "AAZTD"
             ],
-            "dealValue": "12000"
+            "dealValue": 12000,
+            "usage": 3000,
+            "type": "inbound"
         },
         {
             "service": "MOC International",
@@ -22,7 +28,9 @@
                 "AAZVF",
                 "AAZTD"
             ],
-            "dealValue": "1500"
+            "dealValue": 1500,
+            "usage": 5000,
+            "type": "inbound"
         },
         {
             "service": "VOLTE",
@@ -34,7 +42,9 @@
                 "AAZVF",
                 "AAZTD"
             ],
-            "dealValue": "51000"
+            "dealValue": 51000,
+            "usage": 3000,
+            "type": "inbound"
         },
         {
             "service": "MOC EU",
@@ -46,7 +56,9 @@
                 "AAZVF",
                 "AAZTD"
             ],
-            "dealValue": "72000"
+            "dealValue": 72000,
+            "usage": 6000,
+            "type": "inbound"
         },
         {
             "service": "NB-IOT",
@@ -58,7 +70,9 @@
                 "AAZVF",
                 "AAZTD"
             ],
-            "dealValue": "17000"
+            "dealValue": 17000,
+            "usage": 2000,
+            "type": "inbound"
         },
         {
             "service": "SMSMO",
@@ -70,7 +84,9 @@
                 "AAZOR",
                 "GRCPF"
             ],
-            "dealValue": "5000"
+            "dealValue": 5000,
+            "usage": 3000.5,
+            "type": "outbound"
         },
         {
             "service": "MOC International",
@@ -82,7 +98,9 @@
                 "AAZOR",
                 "GRCPF"
             ],
-            "dealValue": "3000"
+            "dealValue": 3000,
+            "usage": 2000,
+            "type": "outbound"
         },
         {
             "service": "VOLTE",
@@ -94,7 +112,9 @@
                 "AAZOR",
                 "GRCPF"
             ],
-            "dealValue": "30000"
+            "dealValue": 30000,
+            "usage": 2000,
+            "type": "outbound"
         },
         {
             "service": "MOC EU",
@@ -106,7 +126,9 @@
                 "AAZOR",
                 "GRCPF"
             ],
-            "dealValue": "60000"
+            "dealValue": 60000,
+            "usage": 4000,
+            "type": "outbound"
         },
         {
             "service": "NB-IOT",
@@ -118,7 +140,9 @@
                 "AAZOR",
                 "GRCPF"
             ],
-            "dealValue": "26000"
+            "dealValue": 26000,
+            "usage": 3000,
+            "type": "outbound"
         }
     ]
 }

@@ -22,7 +22,7 @@ type Deal struct {
 	HomeTadigs        []string `json:"homeTadigs"`
 	VisitorTadigs     []string `json:"visitorTadigs"`
 	CommitmentReached bool     `json:"commitmentReached"`
-	Value             string   `json:"value"`
+	Value             float64  `json:"value"`
 }
 
 // Header contains the calculation versioning information
@@ -36,8 +36,8 @@ type IntermediateResult struct {
 	Service       string   `json:"service"`
 	HomeTadigs    []string `json:"homeTadigs"`
 	VisitorTadigs []string `json:"visitorTadigs"`
-	DealValue     string   `json:"dealValue"`
-	Usage         string   `json:"usage"`
+	DealValue     float64  `json:"dealValue"`
+	Usage         float64  `json:"usage"`
 	Type          string   `json:"type"`
 }
 
@@ -55,14 +55,14 @@ type Usage struct {
 
 //UsageData contains usageData
 type UsageData struct {
-	Volume       string `json:"usage"`
-	Unit         string `json:"units"`
-	Charge       string `json:"charges"`
-	Tax          string `json:"taxes"`
-	Service      string `json:"service"`
-	HomeTadig    string `json:"homeTadig"`
-	VisitorTadig string `json:"visitorTadig"`
-	Direction    string `json:"direction"`
+	Volume       float64 `json:"usage"`
+	Unit         string  `json:"units"`
+	Charge       float64 `json:"charges"`
+	Tax          float64 `json:"taxes"`
+	Service      string  `json:"service"`
+	HomeTadig    string  `json:"homeTadig"`
+	VisitorTadig string  `json:"visitorTadig"`
+	Direction    string  `json:"direction"`
 }
 
 //DiscountModel contains a discount agreement
@@ -79,9 +79,9 @@ type Condition struct {
 
 //SelectedCondition contains the parameters for the condition
 type SelectedCondition struct {
-	CommitmentsValue string `json:"value"`
-	Currency         string `json:"currency"`
-	IncludingTaxes   bool   `json:"includingTaxes"`
+	CommitmentsValue float64 `json:"value"`
+	Currency         string  `json:"currency"`
+	IncludingTaxes   bool    `json:"includingTaxes"`
 }
 
 //ServiceGroup contains the sergvice group data
@@ -112,13 +112,13 @@ type RatingPlan struct {
 }
 
 type Rate struct {
-	Thresholds  []Tier `json:"thresholds"`
-	FixedPrice  string `json:"fixedPrice"`
-	LinearPrice string `json:"linearPrice"`
+	Thresholds  []Tier  `json:"thresholds"`
+	FixedPrice  float64 `json:"fixedPrice"`
+	LinearPrice float64 `json:"linearPrice"`
 }
 
 type Tier struct {
-	Start       string `json:"start"`
-	FixedPrice  string `json:"fixedPrice"`
-	LinearPrice string `json:"linearPrice"`
+	Start       float64 `json:"start"`
+	FixedPrice  float64 `json:"fixedPrice"`
+	LinearPrice float64 `json:"linearPrice"`
 }

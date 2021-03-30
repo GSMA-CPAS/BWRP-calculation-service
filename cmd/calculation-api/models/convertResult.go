@@ -1,8 +1,6 @@
 package models
 
 import (
-	"strconv"
-
 	engine "github.com/GSMA-CPAS/BWRP-calculation-service/pkg/engine/charging"
 )
 
@@ -19,9 +17,9 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 	ir := make([]IntermediateResult, len(intermediateResults))
 	for i, item := range intermediateResults {
 		ir[i] = IntermediateResult{
-			DealValue: strconv.FormatFloat(item.DealValue, 'f', -1, 64),
+			DealValue: item.DealValue,
 			Service:   item.Service,
-			Usage:     strconv.FormatFloat(item.Volume, 'f', -1, 64),
+			Usage:     item.Volume,
 		}
 		ir[i].HomeTadigs = item.HomeTadigs
 		ir[i].VisitorTadigs = item.VisitorTadigs
@@ -34,7 +32,7 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 func ConvertFromEngineTotal(total []engine.Deal) []Deal {
 	result := make([]Deal, 0)
 	for _, v := range total {
-		result = append(result, Deal{HomeTadigs: v.HomeTadigs, VisitorTadigs: v.VisitorTadigs, CommitmentReached: v.CommitmentReached, Value: strconv.FormatFloat(v.Value, 'f', -1, 64)})
+		result = append(result, Deal{HomeTadigs: v.HomeTadigs, VisitorTadigs: v.VisitorTadigs, CommitmentReached: v.CommitmentReached, Value: v.Value})
 	}
 	return result
 }

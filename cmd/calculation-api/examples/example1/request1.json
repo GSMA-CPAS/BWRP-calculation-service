@@ -23,12 +23,12 @@
                            "rate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"5"
+                                    "start":0,
+                                    "linearPrice":5
                                  },
                                  {
-                                    "start":"1500",
-                                    "linearPrice":"3"
+                                    "start":1500,
+                                    "linearPrice":3
                                  }
                               ]
                            }
@@ -42,8 +42,8 @@
                            "rate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "fixedPrice":"1500"
+                                    "start":0,
+                                    "fixedPrice":1500
                                  }
                               ]
                            }
@@ -57,17 +57,17 @@
                            "balancedRate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"15"
+                                    "start":0,
+                                    "linearPrice":15
                                  }
                               ]
                            },
                            "unbalancedRate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"20",
-                                    "fixedPrice":"1000"
+                                    "start":0,
+                                    "linearPrice":20,
+                                    "fixedPrice":1000
                                  }
                               ]
                            }
@@ -81,8 +81,8 @@
                            "rate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"12"
+                                    "start":0,
+                                    "linearPrice":12
                                  }
                               ]
                            }
@@ -96,12 +96,12 @@
                            "rate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"12"
+                                    "start":0,
+                                    "linearPrice":12
                                  },
                                  {
-                                    "start":"1000",
-                                    "linearPrice":"5"
+                                    "start":1000,
+                                    "linearPrice":5
                                  }
                               ]
                            }
@@ -134,8 +134,8 @@
                            "rate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "fixedPrice":"5000"
+                                    "start":0,
+                                    "fixedPrice":5000
                                  }
                               ]
                            }
@@ -149,8 +149,8 @@
                            "rate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "fixedPrice":"3000"
+                                    "start":0,
+                                    "fixedPrice":3000
                                  }
                               ]
                            }
@@ -164,17 +164,17 @@
                            "balancedRate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"15"
+                                    "start":0,
+                                    "linearPrice":15
                                  }
                               ]
                            },
                            "unbalancedRate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"20.5",
-                                    "fixedPrice":"1000"
+                                    "start":0,
+                                    "linearPrice":20.5,
+                                    "fixedPrice":1000
                                  }
                               ]
                            }
@@ -188,8 +188,8 @@
                            "rate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"15"
+                                    "start":0,
+                                    "linearPrice":15
                                  }
                               ]
                            }
@@ -203,12 +203,12 @@
                            "rate":{
                               "thresholds":[
                                  {
-                                    "start":"0",
-                                    "linearPrice":"12"
+                                    "start":0,
+                                    "linearPrice":12
                                  },
                                  {
-                                    "start":"500",
-                                    "linearPrice":"8"
+                                    "start":500,
+                                    "linearPrice":8
                                  }
                               ]
                            }
@@ -224,41 +224,41 @@
       "inbound":[
          {
             "service":"SMSMO",
-            "usage":"3000",
-            "charges":"1007",
-            "taxes":"15",
+            "usage":3000,
+            "charges":1007,
+            "taxes":15,
             "homeTadig":"GRCPF",
             "visitorTadig":"AAZTD"
          },
          {
             "service":"MOC International",
-            "usage":"5000",
-            "charges":"3003",
-            "taxes":"15",
+            "usage":5000,
+            "charges":3003,
+            "taxes":15,
             "homeTadig":"AAZOR",
             "visitorTadig":"AAZVF"
          },
          {
             "service":"VOLTE",
-            "usage":"3000",
-            "charges":"1000",
-            "taxes":"10",
+            "usage":3000,
+            "charges":1000,
+            "taxes":10,
             "homeTadig":"GRCPF",
             "visitorTadig":"AAZVF"
          },
          {
             "service":"MOC EU",
-            "usage":"6000",
-            "charges":"900",
-            "taxes":"9",
+            "usage":6000,
+            "charges":900,
+            "taxes":9,
             "homeTadig":"GRCPF",
             "visitorTadig":"AAZVF"
          },
          {
             "service":"NB-IOT",
-            "usage":"2000",
-            "charges":"600",
-            "taxes":"6",
+            "usage":2000,
+            "charges":600,
+            "taxes":6,
             "homeTadig":"GRCPF",
             "visitorTadig":"AAZVF"
          }
@@ -266,41 +266,41 @@
       "outbound":[
          {
             "service":"SMSMO",
-            "usage":"3000.5",
-            "charges":"1007",
-            "taxes":"15",
+            "usage":3000.5,
+            "charges":1007,
+            "taxes":15,
             "homeTadig":"AAZVF",
             "visitorTadig":"AAZOR"
          },
          {
             "service":"MOC International",
-            "usage":"2000",
-            "charges":"1005",
-            "taxes":"15",
+            "usage":2000,
+            "charges":1005,
+            "taxes":15,
             "homeTadig":"AAZTD",
             "visitorTadig":"AAZOR"
          },
          {
             "service":"VOLTE",
-            "usage":"2000",
-            "charges":"800.5",
-            "taxes":"8",
+            "usage":2000,
+            "charges":800.5,
+            "taxes":8,
             "homeTadig":"AAZVF",
             "visitorTadig":"GRCPF"
          },
          {
             "service":"MOC EU",
-            "usage":"4000",
-            "charges":"1200",
-            "taxes":"12",
+            "usage":4000,
+            "charges":1200,
+            "taxes":12,
             "homeTadig":"AAZTD",
             "visitorTadig":"AAZOR"
          },
          {
             "service":"NB-IOT",
-            "usage":"3000",
-            "charges":"800",
-            "taxes":"8",
+            "usage":3000,
+            "charges":800,
+            "taxes":8,
             "homeTadig":"AAZTD",
             "visitorTadig":"AAZOR"
          }
