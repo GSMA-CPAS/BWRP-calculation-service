@@ -66,6 +66,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				}
 				v := aggUsage.Aggregate(model.Service, group.VisitorTadigs, group.HomeTadigs)
 				intermediateResult = model.Calculate(h, v)
+				intermediateResult.Volume = h.Volume
 				intermediateResult.Service = model.Service
 				intermediateResult.HomeTadigs = group.HomeTadigs
 				intermediateResult.VisitorTadigs = group.VisitorTadigs
