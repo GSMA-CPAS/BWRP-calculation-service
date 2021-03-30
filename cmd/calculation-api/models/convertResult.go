@@ -20,6 +20,7 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 		ir[i] = IntermediateResult{
 			DealValue: strconv.FormatFloat(item.DealValue, 'f', -1, 64),
 			Service:   item.Service,
+			Usage:     strconv.FormatFloat(item.Volume, 'f', -1, 64),
 		}
 		ir[i].HomeTadigs = item.HomeTadigs
 		ir[i].VisitorTadigs = item.VisitorTadigs

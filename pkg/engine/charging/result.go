@@ -16,4 +16,5 @@ type IntermediateResult struct {
 	VisitorTadigs []string
 	DealValue     float64
 	Direction     string
+	Volume        float64
 }

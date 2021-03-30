@@ -28,6 +28,7 @@ type IntermediateResult struct {
 	HomeTadigs    []string `json:"homeTadigs"`
 	VisitorTadigs []string `json:"visitorTadigs"`
 	DealValue     string   `json:"dealValue"`
+	Usage         string   `json:"usage"`
 	Type          string   `json:"type"`
 }
 
