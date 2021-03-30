@@ -1,8 +1,6 @@
 package models
 
 import (
-	"strconv"
-
 	engine "github.com/GSMA-CPAS/BWRP-calculation-service/pkg/engine/charging"
 )
 
@@ -51,13 +49,13 @@ func toEngineRatingPlan(rate Rate, isBackToFirst bool) *engine.RatingPlan {
 	if len(rate.Thresholds) > 0 {
 		engineTiers = toEngineTiers(rate.Thresholds)
 	} else {
-		f, _ := strconv.ParseFloat(rate.FixedPrice, 64)
-		l, _ := strconv.ParseFloat(rate.LinearPrice, 64)
+		// f, _ := strconv.ParseFloat(rate.FixedPrice, 64)
+		// l, _ := strconv.ParseFloat(rate.LinearPrice, 64)
 		engineTiers = []engine.Tier{engine.Tier{
 			From:        0,
 			To:          INF,
-			FixedPrice:  f,
-			LinearPrice: l,
+			FixedPrice:  rate.FixedPrice,
+			LinearPrice: rate.LinearPrice,
 		}}
 	}
 	return &engine.RatingPlan{IsBackToFirst: isBackToFirst, Tiers: engineTiers}
@@ -76,9 +74,9 @@ func getRatingPlanForPricing(service Service) RatingPlan {
 }
 
 func isRate(rate Rate) bool {
-	f, _ := strconv.ParseFloat(rate.FixedPrice, 64)
-	l, _ := strconv.ParseFloat(rate.LinearPrice, 64)
-	return (len(rate.Thresholds) > 0 || f > 0 || l > 0)
+	// f, _ := strconv.ParseFloat(rate.FixedPrice, 64)
+	// l, _ := strconv.ParseFloat(rate.LinearPrice, 64)
+	return (len(rate.Thresholds) > 0 || rate.FixedPrice > 0 || rate.LinearPrice > 0)
 }
 
 func isRatio(balanced Rate, unbalanced Rate) bool {
@@ -88,11 +86,19 @@ func isRatio(balanced Rate, unbalanced Rate) bool {
 func toEngineCondition(condition Condition) engine.Condition {
 	switch c := condition.SelectedConditionName; c {
 	case ContractRevenue:
-		v, _ := strconv.ParseFloat(condition.SelectedCondition.CommitmentsValue, 64)
-		return engine.Condition{Type: engine.ContractRevenue, Value: v, IncludingTaxes: condition.SelectedCondition.IncludingTaxes}
+		// v, _ := strconv.ParseFloat(condition.SelectedCondition.CommitmentsValue, 64)
+		return engine.Condition{
+			Type:           engine.ContractRevenue,
+			Value:          condition.SelectedCondition.CommitmentsValue,
+			IncludingTaxes: condition.SelectedCondition.IncludingTaxes,
+		}
 	case DealRevenue:
-		v, _ := strconv.ParseFloat(condition.SelectedCondition.CommitmentsValue, 64)
-		return engine.Condition{Type: engine.DiscountRevenue, Value: v, IncludingTaxes: condition.SelectedCondition.IncludingTaxes}
+		// v, _ := strconv.ParseFloat(condition.SelectedCondition.CommitmentsValue, 64)
+		return engine.Condition{
+			Type:           engine.DiscountRevenue,
+			Value:          condition.SelectedCondition.CommitmentsValue,
+			IncludingTaxes: condition.SelectedCondition.IncludingTaxes,
+		}
 	default:
 		return engine.Condition{Type: engine.Unconditional}
 	}
@@ -103,16 +109,16 @@ func toEngineTiers(tiers []Tier) []engine.Tier {
 	if len(tiers) > 0 {
 		to := INF
 		for i := len(tiers) - 1; i >= 0; i-- {
-			engineFixedPrice, _ := strconv.ParseFloat(tiers[i].FixedPrice, 64)
-			engineLinearPrice, _ := strconv.ParseFloat(tiers[i].LinearPrice, 64)
-			engineFrom, _ := strconv.ParseFloat(tiers[i].Start, 64)
+			// engineFixedPrice, _ := strconv.ParseFloat(tiers[i].FixedPrice, 64)
+			// engineLinearPrice, _ := strconv.ParseFloat(tiers[i].LinearPrice, 64)
+			// engineFrom, _ := strconv.ParseFloat(tiers[i].Start, 64)
 			engineTiers[i] = engine.Tier{
-				FixedPrice:  engineFixedPrice,
-				LinearPrice: engineLinearPrice,
-				From:        engineFrom,
+				FixedPrice:  tiers[i].FixedPrice,
+				LinearPrice: tiers[i].LinearPrice,
+				From:        tiers[i].Start,
 				To:          to,
 			}
-			to = engineFrom
+			to = tiers[i].Start
 		}
 	}
 	return engineTiers

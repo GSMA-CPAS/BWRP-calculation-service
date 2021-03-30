@@ -1,8 +1,6 @@
 package models
 
 import (
-	"strconv"
-
 	engine "github.com/GSMA-CPAS/BWRP-calculation-service/pkg/engine/charging"
 )
 
@@ -23,13 +21,24 @@ func ConvertToEngineAggregatedUsage(usage Usage) engine.AggregatedUsage {
 	for _, usage := range aggregatedUsageData {
 		key := engine.ServiceTadig{Service: usage.Service, HomeTadig: usage.HomeTadig, VisitorTadig: usage.VisitorTadig}
 		item, ok := aggregatedUsage[key]
-		v, _ := strconv.ParseFloat(usage.Volume, 64)
-		c, _ := strconv.ParseFloat(usage.Charge, 64)
-		t, _ := strconv.ParseFloat(usage.Tax, 64)
+		// v, _ := strconv.ParseFloat(usage.Volume, 64)
+		// c, _ := strconv.ParseFloat(usage.Charge, 64)
+		// t, _ := strconv.ParseFloat(usage.Tax, 64)
 		if !ok {
-			aggregatedUsage[key] = engine.Usage{Volume: v, Unit: engine.Unit(usage.Unit), Charge: c, Tax: t, Direction: usage.Direction}
+			aggregatedUsage[key] = engine.Usage{
+				Volume:    usage.Volume,
+				Unit:      engine.Unit(usage.Unit),
+				Charge:    usage.Charge,
+				Tax:       usage.Tax,
+				Direction: usage.Direction,
+			}
 		} else {
-			aggregatedUsage[key] = engine.Usage{Volume: item.Volume + v, Charge: item.Charge + c, Tax: item.Tax + t, Direction: usage.Direction}
+			aggregatedUsage[key] = engine.Usage{
+				Volume:    item.Volume + usage.Volume,
+				Charge:    item.Charge + usage.Charge,
+				Tax:       item.Tax + usage.Tax,
+				Direction: usage.Direction,
+			}
 		}
 	}
 	return aggregatedUsage
