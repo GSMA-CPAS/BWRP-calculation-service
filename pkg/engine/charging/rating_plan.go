@@ -12,7 +12,7 @@ func (r *RatingPlan) Calculate(vol float64, unit Unit) float64 {
 	for _, tier := range r.Tiers {
 		if !r.IsBackToFirst {
 			sum += tier.Calculate(vol, unit)
-		} else if vol < tier.To {
+		} else if vol > tier.From {
 			tier.From = 0
 			sum = tier.Calculate(vol, unit)
 		}
