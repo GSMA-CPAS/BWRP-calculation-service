@@ -90,8 +90,6 @@ func Calculate(c echo.Context) error {
 	var bodyBytes []byte
 	if c.Request().Body != nil {
 		bodyBytes, _ = ioutil.ReadAll(c.Request().Body)
-		fmt.Println("=========Input Data Start======\n", string(bodyBytes))
-		fmt.Println("=========Input Data End======")
 	}
 
 	var request models.CalculateRequest
