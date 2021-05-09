@@ -24,12 +24,13 @@ type Header struct {
 
 // IntermediateResult contains the results per service
 type IntermediateResult struct {
-	Service       string   `json:"service"`
-	HomeTadigs    []string `json:"homeTadigs"`
-	VisitorTadigs []string `json:"visitorTadigs"`
-	DealValue     float64  `json:"dealValue"`
-	Usage         float64  `json:"usage"`
-	Type          string   `json:"type"`
+	Service           string   `json:"service"`
+	HomeTadigs        []string `json:"homeTadigs"`
+	VisitorTadigs     []string `json:"visitorTadigs"`
+	DealValue         float64  `json:"dealValue"`
+	ShortOfCommitment float64  `json:"shortOfCommitment"`
+	Usage             float64  `json:"usage"`
+	Type              string   `json:"type"`
 }
 
 //CalculateRequest contains the Usage data and discount models in the API request body

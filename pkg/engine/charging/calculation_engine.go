@@ -48,6 +48,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 	for _, part := range contract.Parts {
 		var inCommitmentValue float64 = 0
 		var aggregatedChargeHome float64 = 0
+		var shortFromCommitment float64 = 0
 		partIntermediateResults := make([]IntermediateResult, 0)
 		for _, group := range part.ServiceGroups {
 			for _, model := range group.ChargingModels {
@@ -66,17 +67,20 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				intermediateResult.HomeTadigs = group.HomeTadigs
 				intermediateResult.VisitorTadigs = group.VisitorTadigs
 				intermediateResult.Direction = h.Direction
-				partIntermediateResults = append(partIntermediateResults, intermediateResult)
+
 				if model.IncludedInCommitment {
 					inCommitmentValue += intermediateResult.DealValue
 				}
+				if part.Condition.Type == DiscountRevenue && inCommitmentValue < part.Condition.Value {
+					shortFromCommitment = part.Condition.Value - inCommitmentValue
+					intermediateResult.ShortOfCommitment = shortFromCommitment / float64(len(group.ChargingModels))
+				}
+				if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
+					shortFromCommitment = part.Condition.Value - aggregatedChargeHome
+					intermediateResult.ShortOfCommitment = shortFromCommitment / float64(len(group.ChargingModels))
+				}
+				partIntermediateResults = append(partIntermediateResults, intermediateResult)
 			}
-		}
-		if part.Condition.Type == DiscountRevenue && inCommitmentValue < part.Condition.Value {
-			partIntermediateResults = []IntermediateResult{}
-		}
-		if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
-			partIntermediateResults = []IntermediateResult{}
 		}
 		result.IntermediateResults = append(result.IntermediateResults, partIntermediateResults...)
 	}

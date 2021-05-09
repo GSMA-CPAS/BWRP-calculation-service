@@ -16,9 +16,10 @@ func ConvertFromEngineIntermediateResults(intermediateResults []engine.Intermedi
 	ir := make([]IntermediateResult, len(intermediateResults))
 	for i, item := range intermediateResults {
 		ir[i] = IntermediateResult{
-			DealValue: item.DealValue,
-			Service:   item.Service,
-			Usage:     item.Volume,
+			DealValue:         item.DealValue,
+			ShortOfCommitment: item.ShortOfCommitment,
+			Service:           item.Service,
+			Usage:             item.Volume,
 		}
 		ir[i].HomeTadigs = item.HomeTadigs
 		ir[i].VisitorTadigs = item.VisitorTadigs
