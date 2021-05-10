@@ -71,18 +71,25 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				if model.IncludedInCommitment {
 					inCommitmentValue += intermediateResult.DealValue
 				}
-				if part.Condition.Type == DiscountRevenue && inCommitmentValue < part.Condition.Value {
-					shortFromCommitment = part.Condition.Value - inCommitmentValue
-					intermediateResult.ShortOfCommitment = shortFromCommitment / float64(len(group.ChargingModels))
-				}
-				if part.Condition.Type == ContractRevenue && aggregatedChargeHome < part.Condition.Value {
-					shortFromCommitment = part.Condition.Value - aggregatedChargeHome
-					intermediateResult.ShortOfCommitment = shortFromCommitment / float64(len(group.ChargingModels))
-				}
 				partIntermediateResults = append(partIntermediateResults, intermediateResult)
 			}
+			if part.Condition.Type == DiscountRevenue {
+				shortFromCommitment = part.Condition.Value - inCommitmentValue
+			}
+			if part.Condition.Type == ContractRevenue {
+				shortFromCommitment = (part.Condition.Value - aggregatedChargeHome)
+			}
+			shortage := shortFromCommitment / float64(len(group.ChargingModels))
+			updateSoC(partIntermediateResults, shortage)
 		}
 		result.IntermediateResults = append(result.IntermediateResults, partIntermediateResults...)
 	}
 	return result
+}
+
+func updateSoC(partIntermediateResults []IntermediateResult, shortage float64) []IntermediateResult {
+	for i := range partIntermediateResults {
+		partIntermediateResults[i].ShortOfCommitment = shortage
+	}
+	return partIntermediateResults
 }
