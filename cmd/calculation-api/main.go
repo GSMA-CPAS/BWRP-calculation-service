@@ -58,7 +58,7 @@ func main() {
 	//Swagger
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.Logger.Fatal(e.Start(":8089"))
+	e.Logger.Fatal(e.Start(":8080"))
 }
 
 // Status provides the version and hash of the executable code of the calculation engine.  godoc
