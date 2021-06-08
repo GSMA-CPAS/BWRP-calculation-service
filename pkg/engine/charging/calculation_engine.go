@@ -49,6 +49,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 		var inCommitmentValue float64 = 0
 		var aggregatedChargeHome float64 = 0
 		var shortFromCommitment float64 = 0
+		var nonZeroServices = 0
 		partIntermediateResults := make([]IntermediateResult, 0)
 		for _, group := range part.ServiceGroups {
 			for _, model := range group.ChargingModels {
@@ -56,7 +57,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				h := aggUsage.Aggregate(model.Service, group.HomeTadigs, group.VisitorTadigs)
 				if part.Condition.Type == ContractRevenue {
 					aggregatedChargeHome += h.Charge
-					if part.Condition.IncludingTaxes == true {
+					if part.Condition.IncludingTaxes {
 						aggregatedChargeHome += h.Tax
 					}
 				}
@@ -67,6 +68,10 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				intermediateResult.HomeTadigs = group.HomeTadigs
 				intermediateResult.VisitorTadigs = group.VisitorTadigs
 				intermediateResult.Direction = h.Direction
+
+				if intermediateResult.DealValue == 0 {
+					nonZeroServices++
+				}
 
 				if model.IncludedInCommitment {
 					inCommitmentValue += intermediateResult.DealValue
@@ -79,7 +84,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 			if part.Condition.Type == ContractRevenue {
 				shortFromCommitment = (part.Condition.Value - aggregatedChargeHome)
 			}
-			shortage := shortFromCommitment / float64(len(group.ChargingModels))
+			shortage := shortFromCommitment / float64(nonZeroServices)
 			updateSoC(partIntermediateResults, shortage)
 		}
 		result.IntermediateResults = append(result.IntermediateResults, partIntermediateResults...)
@@ -89,6 +94,9 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 
 func updateSoC(partIntermediateResults []IntermediateResult, shortage float64) []IntermediateResult {
 	for i := range partIntermediateResults {
+		if partIntermediateResults[i].DealValue == 0 {
+			continue
+		}
 		partIntermediateResults[i].ShortOfCommitment = shortage
 	}
 	return partIntermediateResults
