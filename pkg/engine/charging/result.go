@@ -11,10 +11,11 @@ type Result struct {
 
 // IntermediateResult contains the results per service
 type IntermediateResult struct {
-	Service       string
-	HomeTadigs    []string
-	VisitorTadigs []string
-	DealValue     float64
-	Direction     string
-	Volume        float64
+	Service           string
+	HomeTadigs        []string
+	VisitorTadigs     []string
+	DealValue         float64
+	ShortOfCommitment float64
+	Direction         string
+	Volume            float64
 }
