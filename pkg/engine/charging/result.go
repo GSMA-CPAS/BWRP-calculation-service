@@ -18,4 +18,5 @@ type IntermediateResult struct {
 	ShortOfCommitment float64
 	Direction         string
 	Volume            float64
+	IsIncluded        bool
 }

@@ -1,5 +1,9 @@
 package engine
 
+import (
+	"math"
+)
+
 //Uncondtional, ContractRevenue and DiscountRevenue are valid contract conditions
 const (
 	Unconditional = iota
@@ -49,7 +53,7 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 		var inCommitmentValue float64 = 0
 		var aggregatedChargeHome float64 = 0
 		var shortFromCommitment float64 = 0
-		var nonZeroServices = 0
+		var sumOfAllIncludedDeal float64 = 0
 		partIntermediateResults := make([]IntermediateResult, 0)
 		for _, group := range part.ServiceGroups {
 			for _, model := range group.ChargingModels {
@@ -69,35 +73,45 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 				intermediateResult.VisitorTadigs = group.VisitorTadigs
 				intermediateResult.Direction = h.Direction
 
-				if intermediateResult.DealValue == 0 {
-					nonZeroServices++
-				}
-
 				if model.IncludedInCommitment {
 					inCommitmentValue += intermediateResult.DealValue
+					intermediateResult.IsIncluded = true
 				}
 				partIntermediateResults = append(partIntermediateResults, intermediateResult)
 			}
 			if part.Condition.Type == DiscountRevenue {
 				shortFromCommitment = part.Condition.Value - inCommitmentValue
+				sumOfAllIncludedDeal = inCommitmentValue
 			}
 			if part.Condition.Type == ContractRevenue {
 				shortFromCommitment = (part.Condition.Value - aggregatedChargeHome)
+				sumOfAllIncludedDeal = aggregatedChargeHome
 			}
-			shortage := shortFromCommitment / float64(nonZeroServices)
-			updateSoC(partIntermediateResults, shortage)
+			//Ratio Based Short of Commitment
+			updateSoC(partIntermediateResults, shortFromCommitment, sumOfAllIncludedDeal)
 		}
 		result.IntermediateResults = append(result.IntermediateResults, partIntermediateResults...)
 	}
 	return result
 }
 
-func updateSoC(partIntermediateResults []IntermediateResult, shortage float64) []IntermediateResult {
+func updateSoC(partIntermediateResults []IntermediateResult, shortage float64, sumOfAllIncludedDeal float64) []IntermediateResult {
+	// Looping over all services to update shortage based on deal value ratio
 	for i := range partIntermediateResults {
-		if partIntermediateResults[i].DealValue == 0 {
+		if !partIntermediateResults[i].IsIncluded {
 			continue
 		}
-		partIntermediateResults[i].ShortOfCommitment = shortage
+		partIntermediateResults[i].ShortOfCommitment = fixed(shortage*(partIntermediateResults[i].DealValue/sumOfAllIncludedDeal), 1)
 	}
 	return partIntermediateResults
+}
+
+//Functions for roundings off the shortage
+func fixed(i float64, points int) float64 {
+	r := math.Pow(10, float64(points))
+	return float64(roundOff(i*r)) / r
+}
+
+func roundOff(i float64) int {
+	return int(i + math.Copysign(0.5, i))
 }
