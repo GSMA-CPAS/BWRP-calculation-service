@@ -90,6 +90,8 @@ func Calculate(c echo.Context) error {
 	var bodyBytes []byte
 	if c.Request().Body != nil {
 		bodyBytes, _ = ioutil.ReadAll(c.Request().Body)
+		fmt.Println("=========Input Data Start======\n", string(bodyBytes))
+		fmt.Println("=========Input Data End======")
 	}
 
 	var request models.CalculateRequest
@@ -105,6 +107,8 @@ func Calculate(c echo.Context) error {
 	engineResult := e.Calculate(usage, contract)
 	result := models.ConvertFromEngineResult(engineResult)
 	result.Header = models.Header{Version: version, Hash: executableHash}
+	fmt.Println("=========Response Data Start======\n", result)
+	fmt.Println("=========Response Data End======")
 	return c.JSON(http.StatusOK, result)
 }
 

@@ -101,7 +101,7 @@ func updateSoC(partIntermediateResults []IntermediateResult, shortage float64, s
 		if !partIntermediateResults[i].IsIncluded {
 			continue
 		}
-		partIntermediateResults[i].ShortOfCommitment = fixed(shortage*(partIntermediateResults[i].DealValue/sumOfAllIncludedDeal), 1)
+		partIntermediateResults[i].ShortOfCommitment = fixed(shortage*(partIntermediateResults[i].DealValue/sumOfAllIncludedDeal), 4)
 	}
 	return partIntermediateResults
 }
@@ -113,5 +113,5 @@ func fixed(i float64, points int) float64 {
 }
 
 func roundOff(i float64) int {
-	return int(i + math.Copysign(0.5, i))
+	return int(i + math.Copysign(0.2, i))
 }
