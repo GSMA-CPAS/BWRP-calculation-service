@@ -101,6 +101,11 @@ func updateSoC(partIntermediateResults []IntermediateResult, shortage float64, s
 		if !partIntermediateResults[i].IsIncluded {
 			continue
 		}
+		if sumOfAllIncludedDeal == 0 {
+			partIntermediateResults[i].ShortOfCommitment = shortage / float64(len(partIntermediateResults))
+			continue
+		}
+
 		partIntermediateResults[i].ShortOfCommitment = fixed(shortage*(partIntermediateResults[i].DealValue/sumOfAllIncludedDeal), 4)
 	}
 	return partIntermediateResults
