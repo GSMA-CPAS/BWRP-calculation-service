@@ -76,11 +76,11 @@ func getRatingPlanForPricing(service Service) RatingPlan {
 func isRate(rate Rate) bool {
 	// f, _ := strconv.ParseFloat(rate.FixedPrice, 64)
 	// l, _ := strconv.ParseFloat(rate.LinearPrice, 64)
-	return (len(rate.Thresholds) > 0 || rate.FixedPrice > 0 || rate.LinearPrice > 0)
+	return (len(rate.Thresholds) >= 0 || rate.FixedPrice >= 0 || rate.LinearPrice >= 0)
 }
 
 func isRatio(balanced Rate, unbalanced Rate) bool {
-	return (len(balanced.Thresholds) > 0 || len(unbalanced.Thresholds) > 0)
+	return (len(balanced.Thresholds) >= 0 || len(unbalanced.Thresholds) >= 0)
 }
 
 func toEngineCondition(condition Condition) engine.Condition {

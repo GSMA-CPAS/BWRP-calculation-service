@@ -28,7 +28,7 @@ const version = "0.0.1"
 // @description Calculation API
 
 // @contact.name BWRP
-// @contact.email developers@horizon.red
+// @contact.email tilak.vardhan@mobileum.com
 
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
