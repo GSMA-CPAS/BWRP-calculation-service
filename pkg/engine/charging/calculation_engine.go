@@ -98,14 +98,22 @@ func (c *CalculationEngine) Calculate(aggUsage AggregatedUsage, contract Contrac
 func updateSoC(partIntermediateResults []IntermediateResult, shortage float64, sumOfAllIncludedDeal float64) []IntermediateResult {
 	// Looping over all services to update shortage based on deal value ratio
 	for i := range partIntermediateResults {
+		//For all cases where the item is NOT included in deal
 		if !partIntermediateResults[i].IsIncluded {
 			continue
 		}
+		//Only for rarest case where sum of all deals is zero
 		if sumOfAllIncludedDeal == 0 {
-			partIntermediateResults[i].ShortOfCommitment = shortage / float64(len(partIntermediateResults))
+			totalIncluded := 0
+			for n := range partIntermediateResults {
+				if partIntermediateResults[n].IsIncluded {
+					totalIncluded++
+				}
+			}
+			partIntermediateResults[i].ShortOfCommitment = fixed(shortage/float64(totalIncluded), 4)
 			continue
 		}
-
+		//For all cases where the item is included in deal
 		partIntermediateResults[i].ShortOfCommitment = fixed(shortage*(partIntermediateResults[i].DealValue/sumOfAllIncludedDeal), 4)
 	}
 	return partIntermediateResults
