@@ -27,7 +27,7 @@ func ConvertToEngineContract(contract map[string]DiscountModel) engine.Contract 
 func toEngineChargingModels(service Service) []engine.ChargingModel {
 	var ratingPlan RatingPlan = getRatingPlanForPricing(service)
 	chargingModels := make([]engine.ChargingModel, 0)
-	if isRate(ratingPlan.Rate) {
+	if isRate(ratingPlan) {
 		chargingModels = append(chargingModels, engine.ChargingModel{
 			Service:              service.Service,
 			IncludedInCommitment: service.IncludedInCommitment,
@@ -49,8 +49,6 @@ func toEngineRatingPlan(rate Rate, isBackToFirst bool) *engine.RatingPlan {
 	if len(rate.Thresholds) > 0 {
 		engineTiers = toEngineTiers(rate.Thresholds)
 	} else {
-		// f, _ := strconv.ParseFloat(rate.FixedPrice, 64)
-		// l, _ := strconv.ParseFloat(rate.LinearPrice, 64)
 		engineTiers = []engine.Tier{engine.Tier{
 			From:        0,
 			To:          INF,
@@ -73,12 +71,15 @@ func getRatingPlanForPricing(service Service) RatingPlan {
 	}
 }
 
-func isRate(rate Rate) bool {
-	// f, _ := strconv.ParseFloat(rate.FixedPrice, 64)
-	// l, _ := strconv.ParseFloat(rate.LinearPrice, 64)
-	return (len(rate.Thresholds) > 0 || rate.FixedPrice > 0 || rate.LinearPrice > 0)
+//Rate struct is always set to zero initially,
+//hence checking against ratioBased. All non-
+//ratio based are said to be rate based.
+func isRate(ratingPlan RatingPlan) bool {
+	return (len(ratingPlan.BalancedRate.Thresholds) == 0 || len(ratingPlan.UnbalancedRate.Thresholds) == 0)
 }
 
+//Keeping this redundant function for
+//future models support
 func isRatio(balanced Rate, unbalanced Rate) bool {
 	return (len(balanced.Thresholds) > 0 || len(unbalanced.Thresholds) > 0)
 }
@@ -86,14 +87,12 @@ func isRatio(balanced Rate, unbalanced Rate) bool {
 func toEngineCondition(condition Condition) engine.Condition {
 	switch c := condition.SelectedConditionName; c {
 	case ContractRevenue:
-		// v, _ := strconv.ParseFloat(condition.SelectedCondition.CommitmentsValue, 64)
 		return engine.Condition{
 			Type:           engine.ContractRevenue,
 			Value:          condition.SelectedCondition.CommitmentsValue,
 			IncludingTaxes: condition.SelectedCondition.IncludingTaxes,
 		}
 	case DealRevenue:
-		// v, _ := strconv.ParseFloat(condition.SelectedCondition.CommitmentsValue, 64)
 		return engine.Condition{
 			Type:           engine.DiscountRevenue,
 			Value:          condition.SelectedCondition.CommitmentsValue,
