@@ -39,6 +39,35 @@ type CalculateRequest struct {
 	DiscountModels map[string]DiscountModel `json:"discounts"`
 }
 
+type ParseFileRequest struct {
+	Header FileHeader `json:"header"`
+	Body   FileBody   `json:"body"`
+}
+
+//Usage contains usageData records
+type FileHeader struct {
+	Version string          `json:"version"`
+	Type    string          `json:"type"`
+	MSPS    map[string]Msps `json:"msps"`
+}
+
+type FileBody struct {
+	Version   string                   `json:"version"`
+	Metadata  Metadata                 `json:"metadata"`
+	Discounts map[string]DiscountModel `json:"discounts"`
+}
+
+//Usage contains usageData records
+type Metadata struct {
+	Name   string `json:"name"`
+	Author string `json:"author"`
+}
+
+//Usage contains usageData records
+type Msps struct {
+	MinSignatures float32 `json:"minSignatures"`
+}
+
 //Usage contains usageData records
 type Usage struct {
 	Inbound  []UsageData `json:"inbound"`

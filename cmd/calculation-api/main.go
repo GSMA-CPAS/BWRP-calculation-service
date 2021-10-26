@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/GSMA-CPAS/BWRP-calculation-service/cmd/calculation-api/handlers"
 	"github.com/GSMA-CPAS/BWRP-calculation-service/cmd/calculation-api/models"
 
 	_ "github.com/GSMA-CPAS/BWRP-calculation-service/cmd/calculation-api/docs"
@@ -54,6 +55,7 @@ func main() {
 	//Handlers
 	e.POST("/calculate", Calculate)
 	e.GET("/status", Status)
+	e.POST("/calculatecsv", CalculateWithCSV)
 
 	//Swagger
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
@@ -73,6 +75,44 @@ func Status(c echo.Context) error {
 	return c.JSON(http.StatusOK, models.Header{Version: version, Hash: executableHash})
 }
 
+// CalculateWithCSV calculates the dealValue from uploaded files
+// @Summary Calculate the dealvalue
+// @Description Calculate the deal value by processing uploaded contract and usage file
+// @Tags root
+// @Accept File
+// @Produce json
+// @Success 200 {object} models.Result
+// @Router /calculatecsv [post]
+
+func CalculateWithCSV(c echo.Context) error {
+	if c.Request().Body != nil {
+		contractdata, _ := c.FormFile("contractdata")
+		cont, err := contractdata.Open()
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		defer cont.Close()
+		contBuffer, err := io.ReadAll(cont)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		usagedata, _ := c.FormFile("usagedata")
+		usage, err := usagedata.Open()
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		defer usage.Close()
+		usageBuffer, err := io.ReadAll(usage)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		parsedFile := handlers.ParseFiles(contBuffer, usageBuffer)
+		fmt.Print(parsedFile)
+	}
+	result := "ok"
+	return c.JSON(http.StatusOK, result)
+}
+
 // Calculate calculate the deal value of a contract.  godoc
 // @Summary Calculate the dealvalue
 // @Description Calculate the deal value by getting the contract and usage data
@@ -90,8 +130,6 @@ func Calculate(c echo.Context) error {
 	var bodyBytes []byte
 	if c.Request().Body != nil {
 		bodyBytes, _ = ioutil.ReadAll(c.Request().Body)
-		fmt.Println("=========Input Data Start======\n", string(bodyBytes))
-		fmt.Println("=========Input Data End======")
 	}
 
 	var request models.CalculateRequest
@@ -107,8 +145,6 @@ func Calculate(c echo.Context) error {
 	engineResult := e.Calculate(usage, contract)
 	result := models.ConvertFromEngineResult(engineResult)
 	result.Header = models.Header{Version: version, Hash: executableHash}
-	fmt.Println("=========Response Data Start======\n", result)
-	fmt.Println("=========Response Data End======")
 	return c.JSON(http.StatusOK, result)
 }
 
