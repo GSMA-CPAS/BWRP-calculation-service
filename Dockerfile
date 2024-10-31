@@ -1,4 +1,4 @@
-FROM golang:1.15-alpine3.14
+FROM golang:1.23-alpine3.20
 
 COPY . /app
 
@@ -6,7 +6,7 @@ WORKDIR /app
 
 RUN go mod download
 
-RUN go get -u github.com/swaggo/swag/cmd/swag
+RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 RUN swag init -d /app/cmd/calculation-api/
 
